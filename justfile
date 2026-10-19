@@ -31,11 +31,3 @@ publish msg="Update":
     git add -A
     git commit -m "{{msg}}"
     git push
-
-# First-time push: commit everything and push `main` to origin.
-# Assumes `git remote add origin ...` already ran.
-publish-init:
-    git add -A
-    git commit -m "Initial commit"
-    git branch -M main
-    git push -u origin main
