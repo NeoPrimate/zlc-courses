@@ -1,0 +1,148 @@
+[summary]
+objective = 30400.0
+status = "optimal"
+p = 5000
+
+[summary.c]
+"1,1" = 1200.0
+"1,2" = 1800.0
+"2,1" = 3000.0
+"2,2" = 1000.0
+"2,3" = 800.0
+"3,1" = 2000.0
+"3,2" = 2500.0
+"3,3" = 1200.0
+
+[[variables]]
+name = "x[1,1]"
+value = 4.0
+reduced_cost = 0.0
+obj_coef = 1200.0
+allow_increase = 1200.0
+allow_decrease = inf
+
+[[variables]]
+name = "x[1,2]"
+value = 2.0
+reduced_cost = 0.0
+obj_coef = 1800.0
+allow_increase = 3200.0
+allow_decrease = 1200.0
+
+[[variables]]
+name = "x[2,1]"
+value = 0.0
+reduced_cost = 2600.0
+obj_coef = 3000.0
+allow_increase = inf
+allow_decrease = 2600.0
+
+[[variables]]
+name = "x[2,2]"
+value = 4.0
+reduced_cost = 0.0
+obj_coef = 1000.0
+allow_increase = 1100.0
+allow_decrease = 200.0
+
+[[variables]]
+name = "x[2,3]"
+value = 1.0
+reduced_cost = 0.0
+obj_coef = 800.0
+allow_increase = 200.0
+allow_decrease = 1100.0
+
+[[variables]]
+name = "x[3,1]"
+value = 0.0
+reduced_cost = 1200.0
+obj_coef = 2000.0
+allow_increase = inf
+allow_decrease = 1200.0
+
+[[variables]]
+name = "x[3,2]"
+value = 0.0
+reduced_cost = 1100.0
+obj_coef = 2500.0
+allow_increase = inf
+allow_decrease = 1100.0
+
+[[variables]]
+name = "x[3,3]"
+value = 6.0
+reduced_cost = 0.0
+obj_coef = 1200.0
+allow_increase = 1100.0
+allow_decrease = inf
+
+[[variables]]
+name = "s[2]"
+value = 2.0
+reduced_cost = 0.0
+obj_coef = 5000.0
+allow_increase = 200.0
+allow_decrease = 3200.0
+
+[[variables]]
+name = "s[3]"
+value = 0.0
+reduced_cost = 200.0
+obj_coef = 5000.0
+allow_increase = inf
+allow_decrease = 200.0
+
+[[constraints]]
+name = "capacity[1]"
+value = 6.0
+shadow_price = -3200.0
+rhs = 6.0
+slack = 0.0
+allow_increase = 2.0
+allow_decrease = 2.0
+
+[[constraints]]
+name = "capacity[2]"
+value = 5.0
+shadow_price = -4000.0
+rhs = 5.0
+slack = 0.0
+allow_increase = 2.0
+allow_decrease = 4.0
+
+[[constraints]]
+name = "capacity[3]"
+value = 6.0
+shadow_price = -3600.0
+rhs = 6.0
+slack = 0.0
+allow_increase = 1.0
+allow_decrease = 4.0
+
+[[constraints]]
+name = "demand[1]"
+value = 4.0
+shadow_price = 4400.0
+rhs = 4.0
+slack = 0.0
+allow_increase = 2.0
+allow_decrease = 2.0
+
+[[constraints]]
+name = "demand[2]"
+value = 8.0
+shadow_price = 5000.0
+rhs = 8.0
+slack = 0.0
+allow_increase = inf
+allow_decrease = 2.0
+
+[[constraints]]
+name = "demand[3]"
+value = 7.0
+shadow_price = 4800.0
+rhs = 7.0
+slack = 0.0
+allow_increase = 4.0
+allow_decrease = 1.0

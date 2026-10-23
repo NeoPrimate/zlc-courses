@@ -1,0 +1,104 @@
+[summary]
+objective = 94.5946
+status = "optimal"
+
+[[variables]]
+name = "x[1,1]"
+value = 33.7838
+reduced_cost = 0.0
+obj_coef = 0.0
+allow_increase = 0.1071
+allow_decrease = 0.3333
+
+[[variables]]
+name = "x[1,2]"
+value = 250.0
+reduced_cost = 0.0
+obj_coef = 0.0
+allow_increase = inf
+allow_decrease = 0.0811
+
+[[variables]]
+name = "x[2,1]"
+value = 94.5946
+reduced_cost = 0.0
+obj_coef = 0.0
+allow_increase = 0.0882
+allow_decrease = 0.0593
+
+[[variables]]
+name = "x[2,2]"
+value = 0.0
+reduced_cost = -0.0631
+obj_coef = 0.0
+allow_increase = 0.0631
+allow_decrease = inf
+
+[[variables]]
+name = "x[3,1]"
+value = 189.1892
+reduced_cost = 0.0
+obj_coef = 0.0
+allow_increase = 0.1852
+allow_decrease = 0.0698
+
+[[variables]]
+name = "x[3,2]"
+value = 0.0
+reduced_cost = -0.0811
+obj_coef = 0.0
+allow_increase = 0.0811
+allow_decrease = inf
+
+[[variables]]
+name = "y"
+value = 94.5946
+reduced_cost = 0.0
+obj_coef = 1.0
+allow_increase = inf
+allow_decrease = 1.0
+
+[[constraints]]
+name = "requirements[1]"
+value = 0.0
+shadow_price = -0.2162
+rhs = 0.0
+slack = 0.0
+allow_increase = 437.5
+allow_decrease = 96.1538
+
+[[constraints]]
+name = "requirements[2]"
+value = 0.0
+shadow_price = -0.0811
+rhs = 0.0
+slack = 0.0
+allow_increase = 138.8889
+allow_decrease = 102.9412
+
+[[constraints]]
+name = "requirements[3]"
+value = 0.0
+shadow_price = -0.1351
+rhs = 0.0
+slack = 0.0
+allow_increase = 83.3333
+allow_decrease = 259.2593
+
+[[constraints]]
+name = "capacity[1]"
+value = 150.0
+shadow_price = 0.2703
+rhs = 150.0
+slack = 0.0
+allow_increase = inf
+allow_decrease = 41.6667
+
+[[constraints]]
+name = "capacity[2]"
+value = 150.0
+shadow_price = 0.3604
+rhs = 150.0
+slack = 0.0
+allow_increase = 57.6923
+allow_decrease = 150.0

@@ -11,4 +11,5 @@ dependencies = [
     "polars>=2.0.0",
     "pyomo>=6.10.1",
     "scipy>=1.18.1",
+    "tomli-w>=1.2.0",
 ]

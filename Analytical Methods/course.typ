@@ -1,9 +1,26 @@
-#import "/lib/imports.typ": *
+// #import "/lib/imports.typ": *
 #import "@preview/fletcher:0.5.8" as fletcher: diagram, node, edge
 
 #set text(font: "Helvetica", size: 8pt)
 
 #let mc(x) = text(fill: red, x)
+
+#let example(..args) = {
+  let pos = args.pos()
+  let (title, content) = if pos.len() >= 2 {
+    (pos.at(0), pos.at(1))
+  } else {
+    (none, pos.at(0))
+  }
+
+  block(width: 100%, stroke: 0.5pt, inset: 8pt)[
+    #if title != none [
+      *#title*
+      #v(4pt, weak: true)
+    ]
+    #content
+  ]
+}
 
 = Analytical Methods
 
@@ -974,4 +991,786 @@ $
     &sum_(j=1)^37 a_(i j) y_i gt.eq 1 quad forall i = 1, dots, 37 \
     &y_i in {0, 1} quad forall i, dots, 37
   $
+]
+
+#example([Olympic Gymnastic Team])[
+  *Sets*
+
+  
+
+  *Indices*
+
+  *Parameters*
+
+  - $B$: 
+  - $F$: 
+
+  *Decision variables*
+
+  - $x_i = cases(
+    1 "if gymnast" i "does BB only",
+    0 "otherwise",
+  )$
+
+  - $y_i = cases(
+    1 "if gymnast" i "does FE only",
+    0 "otherwise",
+  )$
+  
+  - $w_i = cases(
+    1 "if gymnast" i "does both",
+    0 "otherwise",
+  )$
+
+  - $"bb"_i$: score of gymnist $i$ for BB
+  - $"fe"_i$: score of gymnist $i$ for FE
+
+  *Model*
+
+  $
+    max quad 
+    &sum_(i in) ([x_i + w_i] "bb"_i + [y_i + w_i] "fe"_i) \
+    s.t. quad
+    &sum_(i in) w_i = 3 \
+    &sum_(i in) (x_i + w_i) = 4 \
+    &sum_(i in) (y_i + w_i) = 4 \
+    &x_i + y_i + w_i lt.eq 1 quad forall i in  \ 
+    &x_i, y_i, w_i gt.eq 0
+  $
+  
+]
+
+#example([Euing Gas])[
+  
+  - $x$: amount of oil 1 (extra) to be purchased 
+  - $x_(i j)$: amount of oil $i$ used to product gas $j$
+
+  $
+    max quad 
+    & \
+    s.t. quad
+    & \
+    & \
+    & \
+  $
+]
+
+#example([Scheduling Problem])[
+
+  #v(1em)
+
+  - $x_(i k) = cases(
+      1 "if customer" i "is assigned to position" k,
+      0 "otherwise"
+    )
+  $
+
+  - $t_k$: tardiness of the $k^"th"$ job in sequence
+
+  - $d$: due date
+  - $p$: processing time
+
+  $
+    min quad 
+    &z = sum_(k in K) t_k \
+    s.t. quad
+    &sum_(k in K) x_(i k) = 1 quad && forall i in I \
+    &sum_(i in I) x_(i k) = 1 quad &&  forall k in K \
+    &sum_(i in I) p_i sum_u^k x_(i u) - sum_(i in I) d_i x_(i k) lt.eq t_k quad && forall k \
+    &t_k gt.eq 0 \
+    &x_(i k) = {1, 0}
+  $
+
+  Cumulative sum $p$ of the previous customer orders minus the due date ($d$) of the current task
+
+  $
+    t_1 = (p_3 - d_3)^+
+  $
+
+  Due date of the $k^"th"$ job in the sequence:
+
+  $
+    sum_(i in I) x_(i k) d_i
+  $
+
+  Completion time:
+
+  $
+    sum_(i in I) p_i sum_u^k x_(i u)
+  $
+
+  This is non linear:
+
+  $
+    t_k = (sum_(i in I) p_i sum_u^k x_(i u) - sum_(i in I) x_(i k) d_i)^+
+  $
+
+  So we replace it with:
+
+  $
+    &sum_(i in I) p_i sum_u^k x_(i u) - sum_(i in I) d_i x_(i k) lt.eq t_k \
+    &t_k gt.eq 0   
+  $
+]
+
+#example([Sequence-dependent setup time production problem])[
+
+  TSP Problem
+
+  - $x_(i k) = cases(
+    1 "if gasoline" i "is assigned to position" k,
+    0 "otherwise"
+  )$
+  - $t_(i j)$: transition time between gasoline $i$ and $j$
+  
+  $
+    min quad 
+    &sum_(k in K) t_k \
+    s.t. quad 
+    & \
+    & \
+    & \
+  $
+
+  Solution:
+  - LFR $arrow$ LFP $arrow$ LP $arrow$ LR $arrow$ LFR
+  - 330 minutes
+]
+
+TSP
+
+- $x_(i j) = cases(
+    1 "if vertex" j "is visited immediately after vertex" i,
+    0 "otherwise"
+  )$
+
+$
+  min quad
+  &sum_(i in I) sum_(j in J) c_(i j) x_(i j) \
+  s.t. quad
+  &sum_i x_(i j) = 1 quad &&forall j quad &&("in") \
+  &sum_i x_(i j) = 1 quad &&forall i quad &&("out") \
+  &sum_((i,j) in S) x_(i j) lt.eq abs(S) - 1 quad &&forall S subset V, abs(S) gt 1 quad &&("prevent subtours")
+$
+
+Alternative:
+
+$
+  min quad
+  &sum_(i in I) sum_(j in J) c_(i j) x_(i j) \
+  s.t. quad
+  &sum_i x_(i j) = 1 quad &&forall j quad &&("in") \
+  &sum_i x_(i j) = 1 quad &&forall i quad &&("out") \
+  &mc(u_1 = 1) \
+  &mc(2 lt.eq u_i lt.eq n quad && forall i gt.eq 2) \
+  &mc(u_i - u_j + 1 lt.eq (n - 1)(1 - x_(i j)) quad && forall i\, j eq.not 1) \
+$
+
+#pagebreak()
+
+
+
+// =====================================================================
+//  MZ 510 · Analytical Methods — Taxonomy of optimization models
+//  Pure Typst (no packages). Edit the `nodes` and `edges` arrays below
+//  to add models; coordinates are in cm on the diagram canvas.
+// =====================================================================
+
+#set document(title: "Taxonomy of Optimization Models")
+#set page(paper: "a4", flipped: true, margin: (x: 1.4cm, y: 1.2cm),
+  footer: context [
+    #set text(7pt, fill: luma(130))
+    MZ 510 · Analytical Methods — model taxonomy #h(1fr) #counter(page).display()
+  ])
+#set text(size: 9pt)
+#set par(justify: false)
+
+// ---------- palette ---------------------------------------------------
+#let fam = (
+  root: (fill: luma(235),            stroke: luma(90)),
+  lp:   (fill: rgb("#dbe8f7"),       stroke: rgb("#2f6db3")),
+  net:  (fill: rgb("#dcf0e2"),       stroke: rgb("#2e8b57")),
+  ip:   (fill: rgb("#fbe5d3"),       stroke: rgb("#c0602a")),
+)
+#let ink = luma(60)
+
+// ---------- edge styles -----------------------------------------------
+//  ext  = extension      (adds variables / constraints)     solid
+//  spec = special case   (restricts structure or data)      dashed
+//  ref  = reformulation  (same problem, recast)              dotted
+#let edge-stroke(kind) = {
+  if kind == "ext"  { (paint: ink, thickness: 0.9pt) }
+  else if kind == "spec" { (paint: ink, thickness: 0.9pt, dash: "dashed") }
+  else { (paint: ink, thickness: 1.1pt, dash: "dotted") }
+}
+
+// ---------- nodes: id: (x, y, w, h, family, title, subtitle) ----------
+#let nodes = (
+  lp:     (10.5, 0.4, 3.6, 1.0, "root", "Linear Program", "min cᵀx, Ax ≤ b, x ≥ 0"),
+
+  gen:    (4.0, 2.9, 5.0, 1.3, "lp",  "General LP",
+           "≤ resource allocation: product mix, Lego\n≥ covering: diet, security shifts"),
+  trans:  (16.5, 2.9, 4.2, 1.3, "net", "Transshipment",
+           "min-cost flow · out − in = supply"),
+
+  tp:     (10.6, 5.6, 3.2, 1.1, "net", "Transportation", "plants → DCs"),
+  sp:     (14.3, 5.6, 3.0, 1.1, "net", "Shortest path", "1 unit, s → t"),
+  mf:     (17.8, 5.6, 3.0, 1.1, "net", "Max flow", "Sunco Oil"),
+  mp:     (24.0, 5.6, 3.4, 1.1, "net", "Multi-period inventory", "Sailco"),
+
+  asg:    (8.4, 8.2, 3.0, 1.1, "net", "Assignment", "swimmers, inspection"),
+  unb:    (11.9, 8.2, 3.2, 1.1, "net", "Unbalanced transp.", "Montpelier Ski"),
+  eq:     (15.6, 8.2, 3.7, 1.1, "net", "Equipment replacement", "nodes = years"),
+  bk:     (24.0, 8.2, 3.4, 1.1, "net", "Inventory w/ backlog", "Sailco (backorders)"),
+
+  eul:    (1.8, 11.4, 3.2, 1.1, "ip", "Piecewise cost IP", "Euling Gas"),
+  ms:     (5.2, 11.4, 3.2, 1.1, "ip", "Machine scheduling", "single machine, due dates"),
+  tsp:    (8.4, 11.4, 2.8, 1.1, "ip", "TSP", "subtour / MTZ"),
+  loc:    (20.6, 11.4, 4.0, 1.1, "ip", "Plant & warehouse location",
+           "multi-echelon + open/close"),
+
+  vrp:    (8.4, 14.0, 2.8, 1.1, "ip", "VRP", "several vehicles"),
+  cons:   (14.6, 14.0, 4.2, 1.1, "ip", "Shipment consolidation",
+           "Oxximet · route-days"),
+)
+
+// ---------- edges: (from, to, kind, label, via-points, label-offset) --
+//  via: list of (x, y) bend points; lab: (dx, dy) shift of the label
+#let edges = (
+  (from: "lp",    to: "gen",  kind: "spec", label: "no special structure"),
+  (from: "lp",    to: "trans",kind: "spec", label: "node–arc matrix"),
+
+  (from: "trans", to: "tp",   kind: "spec", label: "no intermediate nodes", lab: (-0.6, -0.1)),
+  (from: "trans", to: "sp",   kind: "spec", label: "1 unit s→t", lab: (-0.15, 0.05)),
+  (from: "trans", to: "mf",   kind: "spec", label: "max throughput", lab: (0.55, 0.0)),
+  (from: "trans", to: "mp",   kind: "ext",  label: "+ time index"),
+  (from: "trans", to: "loc",  kind: "ext",  label: "+ binaries y,  x ≤ K·y",
+     via: ((20.6, 5.0),), lab: (0.4, 0.4)),
+
+  (from: "tp",    to: "asg",  kind: "spec", label: "s = d = 1"),
+  (from: "tp",    to: "unb",  kind: "ext",  label: "+ dummy node"),
+  (from: "sp",    to: "eq",   kind: "ref",  label: "recast as path"),
+  (from: "mp",    to: "bk",   kind: "ext",  label: "+ backorder vars"),
+
+  (from: "gen",   to: "eul",  kind: "ext",  label: "+ binaries", lab: (-0.35, 0.0)),
+  (from: "gen",   to: "ms",   kind: "ext",  label: "+ either-or, big-M", lab: (0.45, 0.0)),
+  (from: "asg",   to: "tsp",  kind: "ext",  label: "+ subtour elimination", lab: (0.0, 0.45)),
+  (from: "tsp",   to: "vrp",  kind: "ext",  label: "+ k vehicles, capacity"),
+  (from: "asg",   to: "cons", kind: "ext",  label: "+ route binaries, capacity, time windows",
+     lab: (1.0, -0.2)),
+  (from: "vrp",   to: "cons", kind: "ref",  label: "routes pre-enumerated", lab: (0.0, -0.32)),
+)
+
+// ---------- geometry helpers -----------------------------------------
+#let ctr(id) = { let n = nodes.at(id); (n.at(0), n.at(1)) }
+// point on node boundary in direction of (tx, ty)
+#let clip(id, tx, ty) = {
+  let n = nodes.at(id)
+  let (cx, cy, w, h) = (n.at(0), n.at(1), n.at(2), n.at(3))
+  let dx = tx - cx
+  let dy = ty - cy
+  let tX = if dx == 0 { 1e9 } else { (w / 2 + 0.06) / calc.abs(dx) }
+  let tY = if dy == 0 { 1e9 } else { (h / 2 + 0.06) / calc.abs(dy) }
+  let t = calc.min(tX, tY)
+  (cx + t * dx, cy + t * dy)
+}
+#let P(p) = (p.at(0) * 1cm, p.at(1) * 1cm)
+
+#let draw-edge(e) = {
+  let via = e.at("via", default: ())
+  let a = ctr(e.from)
+  let b = ctr(e.to)
+  let first = if via.len() > 0 { via.first() } else { b }
+  let last  = if via.len() > 0 { via.last()  } else { a }
+  let pts = (clip(e.from, ..first),) + via + (clip(e.to, ..last),)
+  let st = edge-stroke(e.kind)
+  for i in range(pts.len() - 1) {
+    place(top + left, line(start: P(pts.at(i)), end: P(pts.at(i + 1)), stroke: st))
+  }
+  // arrow head
+  let (p, q) = (pts.at(-2), pts.at(-1))
+  let (dx, dy) = (q.at(0) - p.at(0), q.at(1) - p.at(1))
+  let L = calc.sqrt(dx * dx + dy * dy)
+  let (ux, uy) = (dx / L, dy / L)
+  let (s, wd) = (0.24, 0.10)
+  let base = (q.at(0) - s * ux, q.at(1) - s * uy)
+  place(top + left, polygon(fill: ink, stroke: none,
+    P(q),
+    P((base.at(0) + wd * uy, base.at(1) - wd * ux)),
+    P((base.at(0) - wd * uy, base.at(1) + wd * ux))))
+  // label at midpoint of the longest segment (+ offset)
+  let m = ((pts.first().at(0) + pts.last().at(0)) / 2,
+           (pts.first().at(1) + pts.last().at(1)) / 2)
+  let off = e.at("lab", default: (0, 0))
+  let (mx, my) = (m.at(0) + off.at(0), m.at(1) + off.at(1))
+  place(top + left, dx: (mx - 3) * 1cm, dy: (my - 0.5) * 1cm,
+    box(width: 6cm, height: 1cm, align(center + horizon,
+      box(fill: white, inset: (x: 2pt, y: 1.2pt), radius: 2pt,
+        text(6.4pt, fill: ink, style: "italic", e.label)))))
+}
+
+#let draw-node(id) = {
+  let n = nodes.at(id)
+  let (x, y, w, h, f, title, sub) = n
+  let c = fam.at(f)
+  place(top + left, dx: (x - w / 2) * 1cm, dy: (y - h / 2) * 1cm,
+    box(width: w * 1cm, height: h * 1cm, fill: c.fill,
+        stroke: 0.9pt + c.stroke, radius: 4pt, inset: 3pt,
+      align(center + horizon, {
+        text(8pt, weight: "bold", fill: c.stroke.darken(25%), title)
+        if sub != "" { linebreak(); text(6.4pt, fill: luma(70), sub) }
+      })))
+}
+
+// =====================================================================
+//  PAGE 1 — dependency DAG
+// =====================================================================
+#align(center, text(15pt, weight: "bold")[Taxonomy of optimization models])
+#v(-6pt)
+#align(center, text(8.5pt, fill: luma(90))[
+  Arrows run from simpler to richer models. A model can have several parents, so this is a DAG rather than a tree.])
+#v(2pt)
+
+#block(width: 26.5cm, height: 15.0cm, {
+  // integrality boundary
+  let yb = 9.75
+  place(top + left, dx: 0cm, dy: yb * 1cm,
+    line(length: 26.5cm, stroke: (paint: rgb("#c0602a"), thickness: 0.8pt, dash: "dash-dotted")))
+  place(top + left, dx: 11.3cm, dy: (yb - 0.55) * 1cm,
+    text(7pt, fill: rgb("#c0602a"), weight: "bold")[▲ totally unimodular: the LP already gives integer answers])
+  place(top + left, dx: 11.3cm, dy: (yb + 0.16) * 1cm,
+    text(7pt, fill: rgb("#c0602a"), weight: "bold")[▼ binaries or side constraints: true integer programming needed])
+
+  for e in edges { draw-edge(e) }
+  for id in nodes.keys() { draw-node(id) }
+
+  // legend
+  place(top + left, dx: 20.3cm, dy: 12.7cm, box(
+    width: 6.1cm, inset: 6pt, radius: 4pt, stroke: 0.6pt + luma(170), fill: white, {
+      set text(7pt)
+      let sw(k) = box(width: 1.1cm, height: 6pt, align(horizon,
+        line(length: 1.1cm, stroke: edge-stroke(k))))
+      let chip(f) = box(width: 9pt, height: 7pt, fill: fam.at(f).fill,
+        stroke: 0.7pt + fam.at(f).stroke, radius: 1.5pt)
+      grid(columns: (auto, 1fr), column-gutter: 5pt, row-gutter: 3.5pt,
+        sw("ext"),  [*extension*: adds variables or constraints],
+        sw("spec"), [*special case*: restricts structure or data],
+        sw("ref"),  [*reformulation*: same problem, recast],
+      )
+      v(3pt)
+      chip("lp"); [ General LP #h(5pt)]; chip("net"); [ Network flow #h(5pt)]; chip("ip"); [ Integer]
+    }))
+})
+
+#pagebreak()
+
+// =====================================================================
+//  MZ 510 · Analytical Methods — LP & IP model taxonomy
+//  Pure Typst (no packages). Edit `nodes` / `edges` below; coordinates
+//  are in cm on the diagram canvas (page 1 is A3 landscape).
+//
+//  Evidence levels (from the course PDF, whose slides are mostly images):
+//    "f" = formulation or data readable in the slide text
+//    "t" = slide title only (content is an image)
+//    "i" = inferred (not in the readable text; based on the cited textbook)
+// =====================================================================
+
+#set document(title: "LP & IP Model Taxonomy")
+#set page(paper: "a4", flipped: true, margin: (x: 1.4cm, y: 1.2cm),
+  footer: context [
+    #set text(7pt, fill: luma(130))
+    MZ 510 · Analytical Methods — LP & IP model taxonomy #h(1fr) #counter(page).display()
+  ])
+#set text(size: 9pt)
+#set par(justify: false)
+
+// ---------- palette ---------------------------------------------------
+#let fam = (
+  root: (fill: luma(235),      stroke: luma(90)),
+  lp:   (fill: rgb("#dbe8f7"), stroke: rgb("#2f6db3")),
+  net:  (fill: rgb("#dcf0e2"), stroke: rgb("#2e8b57")),
+  ip:   (fill: rgb("#fbe5d3"), stroke: rgb("#c0602a")),
+)
+#let ink = luma(60)
+
+// ---------- evidence markers ------------------------------------------
+#let ev-mark(s, col) = {
+  if s == "f" { circle(radius: 2.6pt, fill: col, stroke: none) }
+  else if s == "t" { circle(radius: 2.3pt, fill: white, stroke: 1pt + col) }
+  else { circle(radius: 2.3pt, fill: white, stroke: (paint: col, thickness: 0.8pt, dash: "densely-dotted")) }
+}
+#let ev(s) = box(baseline: 1pt, ev-mark(s, ink))
+
+// ---------- edge styles -----------------------------------------------
+//  ext  = extension      (adds variables / constraints)     solid
+//  spec = special case   (restricts structure or data)      dashed
+//  ref  = reformulation  (same problem, recast)              dotted
+#let edge-stroke(kind) = {
+  if kind == "ext"  { (paint: ink, thickness: 0.9pt) }
+  else if kind == "spec" { (paint: ink, thickness: 0.9pt, dash: "dashed") }
+  else { (paint: ink, thickness: 1.1pt, dash: "dotted") }
+}
+
+// ---------- nodes: id: (x, y, w, h, family, evidence, title, subtitle) -
+#let nodes = (
+  lp:    (19.0, 0.6, 4.0, 1.1, "root", "f", "Linear Program", "min cᵀx  s.t.  Ax ≤ b,  x ≥ 0"),
+
+  // general LP family
+  gen:   (8.6, 3.3, 5.0, 1.2, "lp", "f", "General LP", "no special matrix structure"),
+  pm:    (2.4, 6.4, 3.6, 1.35, "lp", "f", "Product mix (≤)",
+          "Ex. 1–2 · graphical A/B · Lego"),
+  diet:  (6.3, 6.4, 3.4, 1.35, "lp", "f", "Diet / blending (≥)", "Prison diet"),
+  shift: (10.5, 6.4, 3.6, 1.35, "lp", "f", "Shift scheduling (≥)",
+          "Security force · integer staff"),
+  sail:  (15.0, 6.4, 3.6, 1.35, "lp", "t", "Multi-period inventory",
+          "Sailco · inventory balance"),
+  back:  (15.0, 9.3, 3.9, 1.2, "lp", "t", "Inventory with backlog", "Sailco · I⁺ − I⁻"),
+
+  // network family
+  trans: (29.0, 3.3, 4.6, 1.2, "net", "i", "Min-cost flow / transshipment",
+          "conceptual root · out − in = b"),
+  tp:    (21.3, 6.4, 3.8, 1.35, "net", "f", "Transportation",
+          "Montpelier Ski · Distribution"),
+  sp:    (25.9, 6.4, 3.4, 1.35, "net", "f", "Shortest path", "LP: 1 unit node 1 → 6"),
+  mf:    (30.3, 6.4, 3.6, 1.35, "net", "t", "Max flow",
+          "Sunco Oil · artificial arc t→s"),
+  asg:   (19.4, 9.3, 3.6, 1.35, "net", "f", "Assignment",
+          "lines → inspection · swimmers"),
+  unb:   (23.4, 9.3, 3.4, 1.2, "net", "t", "Unbalanced transp.", "Montpelier · dummy node"),
+  eq:    (27.7, 9.3, 4.1, 1.2, "net", "t", "Equipment replacement", "nodes = years"),
+
+  // integer programs
+  fc:    (1.6, 13.4, 3.0, 1.35, "ip", "i", "Fixed charge", "setup cost · x ≤ M·y"),
+  eul:   (5.0, 13.4, 3.4, 1.35, "ip", "t", "Piecewise cost", "Euling Gas"),
+  knap:  (8.6, 13.4, 3.3, 1.35, "ip", "i", "Knapsack",
+          "capital budget · loading"),
+  ms:    (12.85, 13.4, 3.6, 1.35, "ip", "f", "Single-machine sched.",
+          "4 jobs · min total delay"),
+  tsp:   (19.4, 13.4, 3.2, 1.35, "ip", "f", "TSP", "DFJ subtours · MTZ"),
+  loc:   (35.4, 13.4, 4.2, 1.35, "ip", "f", "Plant & warehouse location",
+          "suppliers → plants → WH → mkts"),
+
+  scov:  (10.5, 16.6, 3.4, 1.35, "ip", "i", "Set covering", "binary sites / shifts"),
+  vrp:   (19.4, 16.6, 3.2, 1.35, "ip", "t", "VRP", "vehicles · capacity"),
+  cons:  (26.2, 16.6, 4.4, 1.35, "ip", "f", "Shipment consolidation",
+          "Oxximet · trucks vs. LTL"),
+)
+
+// ---------- edges ----------------------------------------------------
+#let edges = (
+  (from: "lp",    to: "gen",   kind: "spec", label: "no special structure"),
+  (from: "lp",    to: "trans", kind: "spec", label: "node–arc incidence matrix"),
+
+  (from: "gen",   to: "pm",    kind: "spec", label: "≤ rows, max profit", lab: (-0.4, 0)),
+  (from: "gen",   to: "diet",  kind: "spec", label: "≥ rows, min cost", lab: (-0.1, 0.15)),
+  (from: "gen",   to: "shift", kind: "spec", label: "≥ per period", lab: (0.25, 0.1)),
+  (from: "gen",   to: "sail",  kind: "ext",  label: "+ time index", lab: (1.1, -0.35)),
+  (from: "sail",  to: "back",  kind: "ext",  label: "+ backorder vars"),
+  (from: "trans", to: "sail",  kind: "ref",  label: "= time-expanded network", lab: (0.3, -0.35)),
+
+  (from: "trans", to: "tp",    kind: "spec", label: "no transshipment nodes", lab: (-0.4, -0.1)),
+  (from: "trans", to: "sp",    kind: "spec", label: "1 unit s→t", lab: (-0.15, 0.05)),
+  (from: "trans", to: "mf",    kind: "spec", label: "max throughput", lab: (0.55, 0.0)),
+  (from: "trans", to: "loc",   kind: "ext",  label: "+ binaries y,  x ≤ K·y, multi-echelon",
+     via: ((35.4, 4.6),), lab: (0.3, 1.8)),
+
+  (from: "tp",    to: "asg",   kind: "spec", label: "s = d = 1"),
+  (from: "tp",    to: "unb",   kind: "ext",  label: "+ dummy node"),
+  (from: "sp",    to: "eq",    kind: "ref",  label: "recast as path"),
+
+  (from: "pm",    to: "fc",    kind: "ext",  label: "+ setup binaries", lab: (-0.45, 0)),
+  (from: "pm",    to: "eul",   kind: "ext",  label: "+ piecewise binaries", lab: (0.25, 0.3)),
+  (from: "pm",    to: "knap",  kind: "ext",  label: "+ x ∈ {0,1}", lab: (0.6, 0.5)),
+  (from: "gen",   to: "ms",    kind: "ext",  label: "+ either-or, big-M",
+     via: ((12.85, 4.8),), lab: (1.85, 2.4)),
+  (from: "asg",   to: "ms",    kind: "ext",  label: [\+ positions $u$, tardiness $t_k$], lab: (0.5, -0.55)),
+  (from: "shift", to: "scov",  kind: "ext",  label: "+ binary choices", via: ((10.5, 12.2),), lab: (-1.25, 3.3)),
+
+  (from: "asg",   to: "tsp",   kind: "ext",  label: "+ subtour elimination", lab: (0.0, 0.5)),
+  (from: "tsp",   to: "vrp",   kind: "ext",  label: "+ k vehicles, capacity"),
+  (from: "asg",   to: "cons",  kind: "ext",  label: "+ route-day binaries, capacity, time windows",
+     lab: (1.9, 0.6)),
+  (from: "vrp",   to: "cons",  kind: "ref",  label: "routes pre-enumerated", lab: (0.0, -0.32)),
+)
+
+// ---------- geometry helpers -----------------------------------------
+#let ctr(id) = { let n = nodes.at(id); (n.at(0), n.at(1)) }
+#let clip(id, tx, ty) = {
+  let n = nodes.at(id)
+  let (cx, cy, w, h) = (n.at(0), n.at(1), n.at(2), n.at(3))
+  let dx = tx - cx
+  let dy = ty - cy
+  let tX = if dx == 0 { 1e9 } else { (w / 2 + 0.06) / calc.abs(dx) }
+  let tY = if dy == 0 { 1e9 } else { (h / 2 + 0.06) / calc.abs(dy) }
+  let t = calc.min(tX, tY)
+  (cx + t * dx, cy + t * dy)
+}
+#let P(p) = (p.at(0) * 1cm, p.at(1) * 1cm)
+
+#let draw-edge(e) = {
+  let via = e.at("via", default: ())
+  let a = ctr(e.from)
+  let b = ctr(e.to)
+  let first = if via.len() > 0 { via.first() } else { b }
+  let last  = if via.len() > 0 { via.last()  } else { a }
+  let pts = (clip(e.from, ..first),) + via + (clip(e.to, ..last),)
+  let st = edge-stroke(e.kind)
+  for i in range(pts.len() - 1) {
+    place(top + left, line(start: P(pts.at(i)), end: P(pts.at(i + 1)), stroke: st))
+  }
+  let (p, q) = (pts.at(-2), pts.at(-1))
+  let (dx, dy) = (q.at(0) - p.at(0), q.at(1) - p.at(1))
+  let L = calc.sqrt(dx * dx + dy * dy)
+  let (ux, uy) = (dx / L, dy / L)
+  let (s, wd) = (0.26, 0.11)
+  let base = (q.at(0) - s * ux, q.at(1) - s * uy)
+  place(top + left, polygon(fill: ink, stroke: none,
+    P(q),
+    P((base.at(0) + wd * uy, base.at(1) - wd * ux)),
+    P((base.at(0) - wd * uy, base.at(1) + wd * ux))))
+  let m = ((pts.first().at(0) + pts.last().at(0)) / 2,
+           (pts.first().at(1) + pts.last().at(1)) / 2)
+  let off = e.at("lab", default: (0, 0))
+  let (mx, my) = (m.at(0) + off.at(0), m.at(1) + off.at(1))
+  place(top + left, dx: (mx - 4) * 1cm, dy: (my - 0.5) * 1cm,
+    box(width: 8cm, height: 1cm, align(center + horizon,
+      box(fill: white, inset: (x: 2pt, y: 1.2pt), radius: 2pt,
+        text(7pt, fill: ink, style: "italic", e.label)))))
+}
+
+#let draw-node(id) = {
+  let (x, y, w, h, f, s, title, sub) = nodes.at(id)
+  let c = fam.at(f)
+  let st = if s == "i" { (paint: c.stroke, thickness: 1pt, dash: "dashed") } else { 1pt + c.stroke }
+  place(top + left, dx: (x - w / 2) * 1cm, dy: (y - h / 2) * 1cm,
+    box(width: w * 1cm, height: h * 1cm, fill: c.fill, stroke: st, radius: 4pt, inset: 3pt, {
+      place(top + right, dx: 1pt, dy: -1pt, ev-mark(s, c.stroke))
+      align(center + horizon, {
+        text(9pt, weight: "bold", fill: c.stroke.darken(25%), title)
+        if sub != "" { linebreak(); text(7pt, fill: luma(70), sub) }
+      })
+    }))
+}
+
+// =====================================================================
+//  PAGE 1 (A3) — dependency DAG
+// =====================================================================
+#page(paper: "a3", flipped: true, margin: (x: 1.5cm, y: 1.3cm))[
+#align(center, text(19pt, weight: "bold")[Linear & integer programming models in MZ 510])
+#v(-8pt)
+#align(center, text(10pt, fill: luma(90))[
+  Arrows run from simpler to richer models. A model can have several parents, so this is a DAG, not a tree.])
+#v(6pt)
+
+#block(width: 39cm, height: 19.2cm, {
+  let yb = 11.35
+  place(top + left, dx: 0cm, dy: yb * 1cm,
+    line(length: 39cm, stroke: (paint: rgb("#c0602a"), thickness: 0.9pt, dash: "dash-dotted")))
+  place(top + left, dx: 27.0cm, dy: (yb - 0.55) * 1cm,
+    text(8pt, fill: rgb("#c0602a"), weight: "bold")[▲ totally unimodular: the LP already gives integer answers])
+  place(top + left, dx: 27.0cm, dy: (yb + 0.15) * 1cm,
+    text(8pt, fill: rgb("#c0602a"), weight: "bold")[▼ integer programs: binaries, logical, side constraints])
+
+  for e in edges { draw-edge(e) }
+  for id in nodes.keys() { draw-node(id) }
+
+  // legend
+  place(top + left, dx: 29.6cm, dy: 15.2cm, box(
+    width: 9.3cm, inset: 7pt, radius: 4pt, stroke: 0.6pt + luma(170), fill: white, {
+      set text(8pt)
+      let sw(k) = box(width: 1.2cm, height: 6pt, align(horizon,
+        line(length: 1.2cm, stroke: edge-stroke(k))))
+      let chip(f) = box(width: 10pt, height: 8pt, fill: fam.at(f).fill,
+        stroke: 0.7pt + fam.at(f).stroke, radius: 1.5pt)
+      grid(columns: (auto, 1fr), column-gutter: 6pt, row-gutter: 4pt,
+        sw("ext"),  [*extension*: adds variables or constraints],
+        sw("spec"), [*special case*: restricts structure or data],
+        sw("ref"),  [*reformulation*: same problem, recast],
+        ev("f"), [formulation / data readable in the slide text],
+        ev("t"), [slide title only (content is an image)],
+        ev("i"), [inferred from the cited textbook (dashed border)],
+      )
+      v(3pt)
+      chip("lp"); [ General LP #h(6pt)]; chip("net"); [ Network flow #h(6pt)]; chip("ip"); [ Integer program]
+    }))
+})
+]
+
+// =====================================================================
+//  PAGE 2 — catalogue of every LP / IP item in the slides
+// =====================================================================
+#text(13pt, weight: "bold")[Catalogue: every LP / IP item in the slides]
+#h(8pt) #text(8pt, fill: luma(90))[#ev("f") readable  #ev("t") title only  #ev("i") inferred]
+#v(2pt)
+
+#let sec(t, n: 5) = table.cell(colspan: n, fill: luma(232), text(weight: "bold", t))
+#set table(stroke: 0.5pt + luma(190), inset: 4pt)
+#[
+#set text(8pt)
+#set table(inset: 3pt)
+#table(
+  columns: (0.6cm, 7.4cm, 4.4cm, 1fr, 0.9cm),
+  table.header([*\#*], [*Model / example*], [*Graph node*], [*What it adds / key feature*], [*Ev.*]),
+  sec[LP Part 1: formulation & graphical solution],
+  [1], [Exercise 1: products A, B on one bottleneck machine], [Product mix], [60 h machine (≤), demand caps x ≤ D], ev("f"),
+  [2], [Exercise 2: products A, B, C, machine + labour hours], [Product mix], [second resource row (10 labour h)], ev("f"),
+  [3], [Graphical solution: A/B with labour, parts, freight], [Product mix], [feasible region, isoprofit line, corner point Z\* = 52,000 at (100, 40)], ev("f"),
+  [4], [Introductory formulation slides (Dr. J. Xu)], [—], [content is images; likely LP terminology and assumptions], ev("i"),
+  sec[LP Part 2: network & multi-period models],
+  [5], [Assignment: 5 assembly lines → 5 inspection areas], [Assignment], [network representation, S#sub[i] = D#sub[j] = 1], ev("f"),
+  [6], [Montpelier Ski: balanced transportation (formulation + solution)], [Transportation], [supply = demand], ev("t"),
+  [7], [Montpelier Ski: unbalanced transportation], [Unbalanced transp.], [dummy demand/supply point or ≤ supply rows], ev("t"),
+  [8], [Sailco inventory, no backlogging (Winston Ch. 3)], [Multi-period inventory], [I#sub[t] = I#sub[t−1] + x#sub[t] − d#sub[t]; regular vs. overtime production], ev("t"),
+  [9], [Sailco with backlogging], [Inventory with backlog], [I#sub[t] = I#super[+]#sub[t] − I#super[−]#sub[t], backorder cost], ev("t"),
+  [10], ["Formulate an LP and check your solution"], [—], [exercise; content not readable], ev("t"),
+  [11], [Sunco Oil maximum flow (+ alternative without artificial arc)], [Max flow], [arc capacities; max flow on artificial arc t → s, or max net outflow of s], ev("t"),
+  [12], [Shortest path LP (Dr. J. Goentzel): 6 nodes, 7 arcs], [Shortest path], [flow conservation (+1 / 0 / −1); x#sub[j] ∈ {0,1} relaxes to x#sub[j] ≥ 0], ev("f"),
+  [13], [Equipment replacement (3 slides)], [Equipment replacement], [nodes = years, arc (i, j) = buy at i, sell at j], ev("t"),
+  sec[LP Part 3: Excel Solver & sensitivity],
+  [14], [Lego production: tables & chairs], [Product mix], [bill of materials, large/small bricks], ev("f"),
+  [15], [Prison diet: milk, beans, oranges], [Diet / blending], [min cost, ≥ niacin, thiamin, vitamin C], ev("f"),
+  [16], [Security force scheduling: 6 overlapping 8-h shifts], [Shift scheduling], [each 4-h period ≥ requirement; integer officers (32)], ev("f"),
+  [17], [Distribution problem: 2 plants → 3 DCs], [Transportation], [supply ≤, demand ≥, cost \$450], ev("f"),
+  [18], [Swimmers → medley-relay strokes], [Assignment], [unbalanced: 5 swimmers ≤ 1, 4 strokes = 1], ev("f"),
+  [19], [Sensitivity report], [(method)], [final value, reduced cost, shadow price, allowable ± ; range of optimality / feasibility], ev("f"),
+  sec[Integer Programming],
+  [20], [IP introduction (Dr. P. Yadav), ~30 image slides], [Fixed charge · Knapsack · Set covering], [likely: binaries, capital budgeting, fixed charge, set covering, either-or / if-then, LP relaxation, branch & bound], ev("i"),
+  [21], [Truck-loading image ("loads")], [Knapsack], [loading/packing motivation], ev("i"),
+  [22], [Euling Gas (Winston Ch. 9)], [Piecewise cost], ["c(x) is nonlinear" → transformed into an IP], ev("t"),
+  [23], [Plant & warehouse location], [Plant & warehouse location], [binaries y#sub[i], y#sub[e]; supplier, plant & WH capacities; flow balance at plants & WH], ev("f"),
+  [24], [Single-machine scheduling with due dates (Winston Ch. 9)], [Single-machine sched.], [4 jobs, min total delay; either-or (big-M) or positional formulation], ev("f"),
+  [25], [Shipment consolidation & dispatching (Ghiani et al.): Oxximet], [Shipment consolidation], [route-day binaries y#sub[rt], x#sub[krt]; LTL option v#sub[k]; capacity q#sub[r]; release r#sub[k] / deadline d#sub[k]], ev("f"),
+  [26], [Travelling salesman (Paolucci)], [TSP], [degree constraints + subtour elimination (DFJ) or MTZ u#sub[i]], ev("f"),
+  [27], [Vehicle routing problem (2 title slides + images)], [VRP], [multiple vehicles, capacity], ev("t"),
+)
+]
+
+#pagebreak()
+
+// =====================================================================
+//  PAGE 3 — modelling devices (variables & constraints)
+// =====================================================================
+#text(13pt, weight: "bold")[Modelling devices: the "added constraints and variables"]
+#v(2pt)
+#table(
+  columns: (4.3cm, 7.6cm, 1fr, 0.9cm),
+  table.header([*Device*], [*Typical form*], [*Where it appears*], [*Ev.*]),
+  sec(n: 4)[Continuous LP devices],
+  [Resource capacity], [$sum_j a_(i j) x_j <= b_i$], [product mix, Lego], ev("f"),
+  [Demand bound], [$x_j <= D_j$], [Exercises 1–2], ev("f"),
+  [Covering requirement], [$sum_j a_(i j) x_j >= r_i$], [diet, security shifts], ev("f"),
+  [Supply / demand rows], [$sum_j x_(i j) <= s_i$,  $sum_i x_(i j) >= d_j$], [transportation, distribution], ev("f"),
+  [Dummy node], [extra column/row with zero cost absorbs imbalance], [unbalanced Montpelier], ev("t"),
+  [Flow conservation], [$sum_("out") x - sum_("in") x = b_v$  (+1 / 0 / −1)], [shortest path, max flow, location], ev("f"),
+  [Arc capacity], [$0 <= x_(i j) <= u_(i j)$], [Sunco Oil], ev("t"),
+  [Artificial return arc], [arc $t -> s$, maximise its flow], [Sunco Oil], ev("t"),
+  [Inventory balance], [$I_t = I_(t-1) + x_t - d_t$], [Sailco], ev("t"),
+  [Backlogging], [$I_t = I_t^+ - I_t^-$, cost on $I_t^-$], [Sailco with backlog], ev("t"),
+  sec(n: 4)[Integer devices],
+  [Integrality], [$x in ZZ_(>=0)$], [security officers, IP section], ev("f"),
+  [Binary decision], [$y in {0,1}$: open / select / do], [location, routes, scheduling], ev("f"),
+  [Linking (fixed charge)], [$x <= M y$  or  $x <= K_i y_i$], [plant & warehouse location], ev("f"),
+  [Piecewise-linear cost], [segment binaries, or $x = sum lambda_k b_k$], [Euling Gas], ev("t"),
+  [Either-or (disjunctive)], [$S_i + p_i <= S_j + M(1 - y_(i j))$, and the reverse], [single-machine scheduling], ev("f"),
+  [If-then / k-of-n], [$g(x) <= M y$, $f(x) <= M(1 - y)$; $sum y <= k$], [IP introduction], ev("i"),
+  [Assignment rows], [$sum_j x_(i j) = 1$,  $sum_i x_(i j) = 1$], [assignment, TSP, positional scheduling], ev("f"),
+  [Positional completion time], [$sum_i p_i sum_(u=1)^k x_(i u)$], [positional scheduling], ev("f"),
+  [Tardiness linearisation], [$t_k >= C_k - d_k$, $t_k >= 0$  (= max(0, ·))], [single-machine scheduling], ev("f"),
+  [Subtour elimination (DFJ)], [$sum_(i, j in S) x_(i j) <= |S| - 1$, for all $S subset V$, $2 <= |S| <= n-1$], [TSP], ev("f"),
+  [MTZ ordering], [$u_i - u_j + n x_(i j) <= n - 1$,  $2 <= u_i <= n$], [TSP], ev("f"),
+  [Vehicle / route capacity], [$sum_k w_k x_(k r t) <= q_r y_(r t)$], [consolidation, VRP], ev("f"),
+  [Time windows], [order $k$ may use day $t$ only if $r_k <= t$ and $t + tau_(k r) <= d_k$], [shipment consolidation], ev("f"),
+  [Mode choice], [$sum_(r, t) x_(k r t) + v_k = 1$], [consolidation (truck vs. LTL)], ev("f"),
+  [Pre-enumerated routes], [variables per route $r in R$ instead of per arc], [consolidation], ev("f"),
+)
+
+#pagebreak()
+
+// =====================================================================
+//  PAGE 4 — base × modifier grid  +  solution methods
+// =====================================================================
+#text(13pt, weight: "bold")[Base structure × modifier]
+#h(8pt) #text(8pt, fill: luma(90))[
+  ★ = in the slides · grey = valid combination you can formulate yourself · — = adds nothing new]
+#v(2pt)
+
+#let star(body) = [★ #body]
+#let open(body) = text(fill: luma(125), style: "italic", body)
+#let na = align(center, text(fill: luma(170))[—])
+#let hdr(t, s) = align(center, [#text(weight: "bold", t) \ #text(6.8pt, fill: luma(80), s)])
+#let rowh(t, f, s) = [#text(weight: "bold", fill: fam.at(f).stroke.darken(25%), t) \ #text(6.8pt, fill: luma(80), s)]
+
+#table(
+  columns: (3.3cm, 1fr, 1fr, 1fr, 1fr, 1fr),
+  inset: 5pt,
+  fill: (x, y) => if y == 0 { luma(238) } else if x == 0 { luma(248) },
+  align: left + horizon,
+  table.header(
+    [],
+    hdr[Time index][x#sub[t], balance across periods],
+    hdr[Binaries / fixed charge][y ∈ {0,1}, x ≤ M·y],
+    hdr[Logical (big-M)][either-or, if-then],
+    hdr[Piecewise / nonlinear][segment binaries],
+    hdr[Subtour elimination][DFJ cuts or MTZ u#sub[i]],
+  ),
+  rowh("General LP", "lp", "≤ / ≥ rows"),
+    star[Sailco (± backlog)],
+    [#star[Knapsack / capital budget (inferred)] \ #star[Fixed charge (inferred)]],
+    star[Single-machine scheduling (either-or)],
+    star[Euling Gas],
+    na,
+  rowh("Covering", "lp", "≥ rows"),
+    open[Multi-week rostering],
+    star[Set covering (inferred)],
+    open[Min-shift-length rules],
+    open[Overtime cost tiers],
+    na,
+  rowh("Transportation", "net", "bipartite supply → demand"),
+    open[Production planning as transportation],
+    open[Fixed-charge transportation],
+    open[Min-shipment-or-zero],
+    open[Quantity-discount freight],
+    na,
+  rowh("Assignment", "net", "s = d = 1"),
+    [#star[Positional machine scheduling] \ #star[Shipment consolidation]],
+    text(fill: luma(125))[already integral (TU)],
+    open[Conflict / precedence pairs],
+    na,
+    star[TSP → VRP],
+  rowh("Transshipment", "net", "min-cost flow"),
+    star[Sailco as time-expanded network],
+    star[Plant & warehouse location],
+    open[Single-sourcing per customer],
+    open[Concave arc costs],
+    na,
+  rowh("Shortest path", "net", "1 unit s → t"),
+    star[Equipment replacement],
+    text(fill: luma(125))[already integral (TU)],
+    open[Resource-constrained SP],
+    na, na,
+  rowh("Max flow", "net", "max throughput"),
+    open[Dynamic (time-expanded) flow],
+    open[Network interdiction],
+    na, na, na,
+)
+
+#v(6pt)
+#text(11pt, weight: "bold")[Solution methods covered alongside the models]
+#v(2pt)
+#table(columns: (4.3cm, 1fr, 0.9cm),
+  fill: (x, y) => if y == 0 { luma(238) },
+  [*Method*], [*Use*], [*Ev.*],
+  [Graphical solution], [2-variable LPs: feasible region, isoprofit line, optimal corner point], ev("f"),
+  [Excel Solver], [Spreadsheet models of product mix, diet, scheduling, transportation, assignment], ev("f"),
+  [Sensitivity analysis], [Shadow prices, reduced costs, range of optimality (cost coeff.), range of feasibility (RHS)], ev("f"),
+  [Total unimodularity], [Why network LPs give integer solutions: shortest-path integrality relaxed to x ≥ 0], ev("f"),
+  [LP relaxation, branch & bound], [Standard IP solution method in Winston Ch. 9], ev("i"),
+)
+
+#v(6pt)
+#block(fill: luma(246), inset: 7pt, radius: 4pt, width: 100%)[
+  *Classifying a new model.* (1) Flow conservation at nodes? If yes, start in the network family; if not, general LP.
+  (2) Which devices (page 3) were added? If any of them is integer, it sits below the TU line.
+  "Scheduling" appears three times: *shift* scheduling (covering LP), *machine* scheduling (sequencing IP),
+  and *dispatch* scheduling (shipment consolidation).
 ]

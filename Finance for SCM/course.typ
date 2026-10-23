@@ -1,4 +1,4 @@
-#import "/lib/imports.typ": *
+#import "../../lib/imports.typ": *
 #import "/lib/formatting.typ": *
 #import "@local/tystats:0.1.0": norm, poisson, expon
 
@@ -1135,6 +1135,43 @@ If conflict between NPV, IRR and BCR, go for NPV.
 ]
 
 
+== Perpetuity
+
+$
+  "NPV" = sum_(i=1)^infinity c_i / (1 + r)^i = c / r
+$
+
+Since $c$ is constant and forever
+
+$
+  (12 times 40) / r_y = 21000 quad arrow.double quad r_y = dots
+$
+
+== WACC
+
+$
+  w = E / (D + E) r_E + D / (D + E) r_D (1 - t)
+$
+
+== CAPM
+
+$
+  r_E = r_f + beta_e (E[tilde(r)_m] - r_f) \
+  beta_e = (Cov(tilde(r)_m, tilde(r)_E) / sigma_m^2) \
+$
+
+== Valuation
+
+$
+  V = "NPV"(w, "FCF"_i)
+$
+
+== FCF
+
+
+
+
+
 
 
 #set page(width: 15in, height: auto, margin: 0.4in, fill: white)
@@ -1408,4 +1445,5 @@ If conflict between NPV, IRR and BCR, go for NPV.
 
   ]
 )
+
 
