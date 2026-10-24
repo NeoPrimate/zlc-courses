@@ -126,7 +126,8 @@
       min quad
       &c (x_(1 1) + x_(1 2) + x_(1 3) + x_(2 1) + x_(2 2) + x_(2 3) + x_(3 1) + x_(3 2) + x_(3 3))\ 
       &mc(+ p (s_2 + s_3)) \
-      "s.t." quad
+      "s.t."
+      \
       &cases(
         reverse: #true, gap: #0.75em,
         x_(1 1) + x_(1 2) + x_(1 3) &<= S_1,
@@ -312,7 +313,8 @@ $
   [
     $
       max quad & y \
-      "s.t." quad
+      "s.t."
+      \
       &cases(
         reverse: #true, gap: #0.75em,
         x_(1 A) + x_(1 B) gt.eq 3 y,
@@ -466,7 +468,8 @@ $
     $
       min quad 
       &p_1 x_1 + p_2 x_2 + p_3 x_3 + p_4 x_4  \
-      "s.t." quad
+      "s.t."
+      \
       &cases(
         reverse: #true, gap: #0.75em,
         s_2 = e_1 + x_2,
@@ -662,7 +665,8 @@ $
       &c_(3 1) x_(3 1) + c_(3 2) x_(3 2) + c_(3 3) x_(3 3) + \
       &c_(4 1) x_(4 1) + c_(4 2) x_(4 2) + c_(4 3) x_(4 3) \
       \
-      "s.t." quad
+      "s.t." 
+      \
       &cases(
         reverse: #true, gap: #0.75em,
         &x_(1 1) + x_(1 2) + x_(1 3) mc(=) k_1,
@@ -810,7 +814,7 @@ $
   [
     $
       min quad
-      &sum_(i in I) sum_(j in J) x_(i j) c_j \
+      &sum_(i in I) sum_(j in J) x_(i j) c_(i j) \
       "s.t." quad 
       & \
       & \
@@ -820,11 +824,32 @@ $
   [
     $
       min quad
-      & \
-      "s.t." quad 
-      & \
-      & \
-      & \
+      &x_(1 1) c_(1 1) + x_(1 2) c_(1 2) + x_(1 3) c_(1 3) + \
+      &x_(2 1) c_(2 1) + x_(2 2) c_(2 2) + x_(2 3) c_(2 3) \
+      "s.t." quad
+      \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        x_(1 1) &gt.eq d_(1 1),
+        x_(1 2) + y_(1 1) &gt.eq d_(1 2),
+        x_(1 3) + y_(1 1) + y_(1 2) &gt.eq d_(1 3),
+        ,
+        x_(2 1) &gt.eq d_(2 1),
+        x_(2 2) + y_(2 1) &gt.eq d_(2 2),
+        x_(2 3) + y_(2 1) + y_(2 2) &gt.eq d_(2 3),
+      ) quad "demand" 
+      \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        ,
+        ,
+      ) quad "holding" 
+      \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        x_(1 3) gt.eq 300,
+        x_(2 3) gt.eq 200,
+      ) quad "end inventory"
     $
   ]
 )
@@ -977,7 +1002,8 @@ $
       &c_(1 1) y_(1 1) + c_(1 2) y_(1 2) + c_(1 3) y_(1 3) + \
       &c_(2 1) y_(2 1) + c_(2 2) y_(2 2) + c_(2 3) y_(2 3) \
       \
-      "s.t." quad
+      "s.t."
+      \
       &cases(
         reverse: #true, gap: #0.75em,
         &x_(1 1) + x_(1 2) lt.eq S_1,
@@ -1192,17 +1218,27 @@ $
       &c_(46) x_(46) + c_(47) x_(47) + c_(48) x_(48) + \
       &c_(56) x_(56) + c_(57) x_(57) + c_(58) x_(58) \
       \
-      "s.t." quad
-      &x_(13) + x_(14) + x_(15) lt.eq S_1 \
-      &x_(23) + x_(24) + x_(25) lt.eq S_2 \
+      "s.t."
       \
-      &y_(36) + y_(46) + y_(56) gt.eq D_6 \
-      &y_(37) + y_(47) + y_(57) gt.eq D_7 \
-      &y_(38) + y_(48) + y_(58) gt.eq D_8 \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        x_(13) + x_(14) + x_(15) lt.eq S_1,
+        x_(23) + x_(24) + x_(25) lt.eq S_2,
+      ) quad "supply"
       \
-      &x_(13) + x_(23) = y_(36) + y_(37) + y_(38) \
-      &x_(14) + x_(24) = y_(46) + y_(47) + y_(48) \
-      &x_(15) + x_(25) = y_(56) + y_(57) + y_(58) \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        y_(36) + y_(46) + y_(56) gt.eq D_6,
+        y_(37) + y_(47) + y_(57) gt.eq D_7,
+        y_(38) + y_(48) + y_(58) gt.eq D_8,
+      ) quad "demand"
+      \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        x_(13) + x_(23) = y_(36) + y_(37) + y_(38),
+        x_(14) + x_(24) = y_(46) + y_(47) + y_(48),
+        x_(15) + x_(25) = y_(56) + y_(57) + y_(58),
+      ) quad "conservation"
       \
       &x_(13), x_(14), x_(15), x_(23), x_(24), x_(25) gt.eq 0 \
       \
@@ -1217,7 +1253,7 @@ $
       "s.t." quad
       &sum_(j in J) sum_(k in K) x_(i j k) lt.eq S_i quad &&forall i in I quad &&"supply" \
       &sum_(i in I) sum_(j in J) x_(i j k) gt.eq D_k quad &&forall k in K quad &&"demand" \
-      &x_(i j k) gt.eq 0 &&forall i in I, j in J, k in K quad &&"non-negativity"
+      &x_(i j k) gt.eq 0 &&forall i in I, j in J, k in K
     $
   ],
   [
@@ -1231,12 +1267,21 @@ $
       &(c_(25) + c_(56)) x_(256) + (c_(25) + c_(57)) x_(257) + (c_(25) + c_(58)) x_(258) \
       \
       "s.t." quad
-      &x_(136) + x_(137) + x_(138) + x_(146) + x_(147) + x_(148) + x_(156) + x_(157) + x_(158) lt.eq S_1 \
-      &x_(236) + x_(237) + x_(238) + x_(246) + x_(247) + x_(248) + x_(256) + x_(257) + x_(258) lt.eq S_2 \
       \
-      &x_(136) + x_(146) + x_(156) + x_(236) + x_(246) + x_(256) gt.eq D_6 \
-      &x_(137) + x_(147) + x_(157) + x_(237) + x_(247) + x_(257) gt.eq D_7 \
-      &x_(138) + x_(148) + x_(158) + x_(238) + x_(248) + x_(258) gt.eq D_8 \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        &x_(136) + x_(137) + x_(138) + x_(146) + x_(147) +, 
+        &x_(148) + x_(156) + x_(157) + x_(158) lt.eq S_1,
+        &x_(236) + x_(237) + x_(238) + x_(246) + x_(247) +,
+        &x_(248) + x_(256) + x_(257) + x_(258) lt.eq S_2,
+      ) quad "supply"
+      \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        x_(136) + x_(146) + x_(156) + x_(236) + x_(246) + x_(256) gt.eq D_6,
+        x_(137) + x_(147) + x_(157) + x_(237) + x_(247) + x_(257) gt.eq D_7,
+        x_(138) + x_(148) + x_(158) + x_(238) + x_(248) + x_(258) gt.eq D_8,
+      ) quad "demand"
       \
       &x_(136), x_(137), x_(138), x_(146), x_(147), x_(148), x_(156), x_(157), x_(158), \
       &x_(236), x_(237), x_(238), x_(246), x_(247), x_(248), x_(256), x_(257), x_(258) gt.eq 0 
