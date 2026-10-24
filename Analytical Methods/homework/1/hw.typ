@@ -160,14 +160,14 @@ See `problem_1.py`.
 
 #table(
   columns: 2,
-  fill: (x, y) => if x == 0 and y == 0 { luma(210) },
+  fill: (x, y) => if x == 0 and y == 0 { luma(222) },
   [Objective], [#objective],
 )
 
 #figure(
   table(
     columns: 6,
-    fill: (x, y) => if y == 0 { luma(210) },
+    fill: (x, y) => if y == 0 { luma(222) },
     table.header([*Variable*], [*Value*], [*Reduced\ Cost*], [*Objective\ Coef*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
     ..results.variables.map(row => row.values().map(val => [#val])).flatten(),
   ),
@@ -177,7 +177,7 @@ See `problem_1.py`.
 #figure(
   table(
     columns: 7,
-    fill: (x, y) => if y == 0 { luma(210) },
+    fill: (x, y) => if y == 0 { luma(222) },
     table.header([*Name*], [*Value*], [*Shadow\ Price*], [*RHS*], [*Slack*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
     ..results.constraints.map(row => row.values().map(val => [#val])).flatten()
   ),
@@ -187,7 +187,7 @@ See `problem_1.py`.
 #figure(
   table(
     columns: 2,
-    fill: (x, y) => if y == 0 { luma(210) },
+    fill: (x, y) => if y == 0 { luma(222) },
     table.header([*Edge*], [*Cost*]),
     ..results.summary.c.pairs().flatten().map(v => [#v]),
   ),
@@ -344,14 +344,14 @@ See `problem_2.py`.
 
 #table(
   columns: 2,
-  fill: (x, y) => if x == 0 and y == 0 { luma(210) },
+  fill: (x, y) => if x == 0 and y == 0 { luma(222) },
   [Objective], [#objective],
 )
 
 #figure(
   table(
     columns: 6,
-    fill: (x, y) => if y == 0 { luma(210) },
+    fill: (x, y) => if y == 0 { luma(222) },
     table.header([*Variable*], [*Value*], [*Reduced\ Cost*], [*Objective\ Coef*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
     ..results.variables.map(row => row.values().map(val => [#val])).flatten(),
   ),
@@ -361,7 +361,7 @@ See `problem_2.py`.
 #figure(
   table(
     columns: 7,
-    fill: (x, y) => if y == 0 { luma(210) },
+    fill: (x, y) => if y == 0 { luma(222) },
     table.header([*Name*], [*Value*], [*Shadow\ Price*], [*RHS*], [*Slack*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
     ..results.constraints.map(row => row.values().map(val => [#val])).flatten()
   ),
@@ -369,6 +369,29 @@ See `problem_2.py`.
 )
 
 = Problem 3
+
+#align(center)[
+  #diagram(
+    node-shape: circle,
+    spacing: (7.5em, 2em),
+    {
+      node((0, 0), [LA], stroke: 0.5pt, name: <LA>)
+      node((1, 0), [HO], stroke: 0.5pt, name: <HO>)
+      node((2, 0), [NY], stroke: 0.5pt, name: <NY>)
+      node((3, 0), [MI], stroke: 0.5pt, name: <MI>)
+
+      node((0, -0.75), [88], stroke: none, name: <LAp>)
+      node((1, -0.75), [15], stroke: none, name: <HOp>)
+      node((2, -0.75), [105], stroke: none, name: <NYp>)
+      node((3, -0.75), [95], stroke: none, name: <MIp>)
+
+      edge(<LA>, <HO>, "-|>", [1500], label-pos: 0.5,  label-side: center)
+      edge(<HO>, <NY>, "-|>", [1700], label-pos: 0.5,  label-side: center)
+      edge(<NY>, <MI>, "-|>", [1300], label-pos: 0.5,  label-side: center)
+      edge(<MI>, <LA>, "-|>", [2700], label-pos: 0.5,  label-side: center, bend: 35deg)
+    }
+  )
+]
 
 *Sets*
 
@@ -380,7 +403,22 @@ See `problem_2.py`.
 
 *Parameters*
 
+- $k = 12000$: total plane fuel *capacity*
+- $e = 600$: *ending fuel level* for each leg
+- Fuel consumption:
+  - $c$: fuel *consumption* (gal/mile)
+  - $f$: fuel *level*
+  - $f_s$: fuel level at the *start* of the leg
+  - $f_e$: fuel level at the *end* of the leg
+  - $macron(l)$: *average* fuel level
 
+$
+  c = macron(f) / 2000
+$
+
+$
+  macron(f) = (f_s + f_e) / 2
+$
 
 *Decision Variables*
 
@@ -403,29 +441,145 @@ See `problem_3.py`.
 
 = Problem 4
 
+#align(center)[
+  #let dx = 4
+  #let dy = 2
+
+  #diagram({
+    let off = dy * (4 - 3) / 2
+
+    node((0, (dy * 0)), [$A$], stroke: 0.5pt, name: <A>)
+    node((0, (dy * 1)), [$B$], stroke: 0.5pt, name: <B>)
+    node((0, (dy * 2)), [$C$], stroke: 0.5pt, name: <C>)
+    node((0, (dy * 3)), [$D$], stroke: 0.5pt, name: <D>)
+
+    node((-0.5, (dy * 0)), [90], stroke: none, name: <As>)
+    node((-0.5, (dy * 1)), [50], stroke: none, name: <Bs>)
+    node((-0.5, (dy * 2)), [80], stroke: none, name: <Cs>)
+    node((-0.5, (dy * 3)), [60], stroke: none, name: <Ds>)
+
+    node((dx, off + (dy * 0)), [$1$], stroke: 0.5pt, name: <D1>)
+    node((dx, off + (dy * 1)), [$2$], stroke: 0.5pt, name: <D2>)
+    node((dx, off + (dy * 2)), [$3$], stroke: 0.5pt, name: <D3>)
+
+    node((dx + 0.5, off + (dy * 0)), [120], stroke: none, name: <D1d>)
+    node((dx + 0.5, off + (dy * 1)), [100], stroke: none, name: <D2d>)
+    node((dx + 0.5, off + (dy * 2)), [110], stroke: none, name: <D3d>)
+
+    edge(<A>, <D1>, "-|>", [70], label-pos: 0.5, label-side: center)
+    edge(<A>, <D2>, "-|>", [100], label-pos: 0.85, label-side: center)
+    edge(<A>, <D3>, "-|>", [50], label-pos: 0.15, label-side: center)
+
+    edge(<B>, <D1>, "-|>", [120], label-pos: 0.75, label-side: center)
+    edge(<B>, <D2>, "-|>", [90], label-pos: 0.15, label-side: center)
+    edge(<B>, <D3>, "-|>", [40], label-pos: 0.15, label-side: center)
+
+    edge(<C>, <D1>, "-|>", [70], label-pos: 0.15, label-side: center)
+    edge(<C>, <D2>, "-|>", [30], label-pos: 0.15, label-side: center)
+    edge(<C>, <D3>, "-|>", [110], label-pos: 0.15, label-side: center)
+
+    edge(<D>, <D1>, "-|>", [90], label-pos: 0.25, label-side: center)
+    edge(<D>, <D2>, "-|>", [50], label-pos: 0.25, label-side: center)
+    edge(<D>, <D3>, "-|>", [70], label-pos: 0.5, label-side: center)
+  })
+]
+
 *Sets*
 
-
+- $I = {1, 2, 3, 4}$: set of *supply* nodes
+- $J = {1, 2, 3}$: set of *demand* nodes
 
 *Indices*
 
-
+- $i in I$: *supply* nodes
+- $j in J$: *demand* nodes
 
 *Parameters*
 
+- $k_i$: *capacity* at supply node $i$
 
+$
+  K = vec(
+    90,
+    50,
+    80,
+    60,
+  )
+$
+
+- $d_j$: *demand* at demand node $j$
+
+
+$
+  D = vec(
+    120,
+    100,
+    110,
+  )
+$
+
+- $c_(i j)$: unit *cost* of transporting a product from supply node $i$ to demand node $j$
+
+$
+  C = mat(
+    70, 100, 50;
+    120, 90, 40;
+    70, 30, 110;
+    90, 50, 70;
+  )
+$
 
 *Decision Variables*
 
-
+- $x_(i j)$: number of units sent from *supply node* $i$ to *demand node* $j$
 
 *Model*
 
-
-
-*Code*
-
-
+#grid(
+  columns: 2,
+  align: center + top,
+  column-gutter: 1fr,
+  [
+    $
+      min quad 
+      &sum_(i in I) sum_(j in J) c_(i j) x_(i j) \
+      "s.t." quad
+      &sum_(j in J) x_(i j) mc(=) k_i    &&forall i in I quad &&"supply" \
+      &sum_(i in I) x_(i j) mc(lt.eq) d_j &&forall j in J quad &&"demand" \
+      &x_(i j) gt.eq 0 forall i in I, j in J \
+    $
+  ],
+  [
+    $
+      min quad 
+      &c_(1 1) x_(1 1) + c_(1 2) x_(1 2) + c_(1 3) x_(1 3) + \
+      &c_(2 1) x_(2 1) + c_(2 2) x_(2 2) + c_(2 3) x_(2 3) + \
+      &c_(3 1) x_(3 1) + c_(3 2) x_(3 2) + c_(3 3) x_(3 3) + \
+      &c_(4 1) x_(4 1) + c_(4 2) x_(4 2) + c_(4 3) x_(4 3) \
+      \
+      "s.t." quad
+      &cases(
+        reverse: #true, gap: #0.75em,
+        &x_(1 1) + x_(1 2) + x_(1 3) mc(=) k_1,
+        &x_(2 1) + x_(2 2) + x_(2 3) mc(=) k_2,
+        &x_(3 1) + x_(3 2) + x_(3 3) mc(=) k_3,
+        &x_(4 1) + x_(4 2) + x_(4 3) mc(=) k_4,
+      ) quad "supply"
+      \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        &x_(1 1) + x_(2 1) + x_(3 1) + x_(4 1) mc(lt.eq) d_1,
+        &x_(1 2) + x_(2 2) + x_(3 2) + x_(4 2) mc(lt.eq) d_2,
+        &x_(1 3) + x_(2 3) + x_(3 3) + x_(4 3) mc(lt.eq) d_3,
+      ) quad "demand"
+      \
+      &x_(1 1), x_(1 2), x_(1 3), \ 
+      &x_(2 1), x_(2 2), x_(2 3), \ 
+      &x_(3 1), x_(3 2), x_(3 3), \ 
+      &x_(4 1), x_(4 2), x_(4 3) gt.eq 0 \ 
+    $
+  ]
+)
 
 *Code*
 
@@ -434,31 +588,103 @@ See `problem_4.py`.
 *Solution*
 
 
+
 = Problem 5
+
+#table(
+  columns: 8,
+  inset: 0.5em,
+  fill: (x, y) => if y == 0 { luma(222) },
+  [*Quarter*], [*Production cost\ A21*], [*Production cost\ B32*], [*Holding cost\ A21*], [*Holding cost\ B32*], [*Demand\ A21*], [*Demand\ B32*], [*Capacity*], 
+  [1], [8000], [10000], [400], [500], [1200], [380], [4000], 
+  [2], [8800], [11000], [440], [550], [2500], [1500], [3500], 
+  [3], [9680], [12100], [484], [605], [1800], [1200], [2000], 
+)
 
 *Sets*
 
-
+- $I = {1, 2}$: set of *boat models*
+- $J = {1, 2, 3}$: set of *quarters*
 
 *Indices*
 
-
+- $i in I$
+- $j in J$
 
 *Parameters*
 
+- $h_(i j)$: *holding cost* of model $i$ in produced in *quarter* $j$
 
+$
+  H = mat(
+    400, 500;
+    440, 550;
+    484, 605;
+  )
+$
+
+- $c_(i j)$: production *cost* of model $i$ produced in *quarter* $j$
+
+$
+  C = mat(
+    8000, 10000;
+    8800, 11000;
+    9680, 12100;
+  )
+$
+
+- $d_(i j)$: *demand* for model $i$ in *quarter* $j$
+
+$
+  D = mat(
+    1200, 380;
+    2500, 1500;
+    1800, 1200;
+  )
+$
+
+- $k_j$: production *capacity* in quarter $j$
+
+$
+  K = vec(
+    4000,
+    3500,
+    2000,
+  )
+$
 
 *Decision Variables*
 
-
+- $x_(i j)$: number of units of *boat model* $j$ to produce in *quarter* $i$
+- $y_(i j)$: *inventory* of boats $i$ at the end of *quarter* $j$
 
 *Model*
 
-
-
-*Code*
-
-
+#grid(
+  columns: 2,
+  align: center + top,
+  column-gutter: 1fr,
+  [
+    $
+      min quad
+      &sum_(i in I) sum_(j in J) x_(i j) c_j \
+      "s.t." quad 
+      & \
+      & \
+      & \
+    $
+  ],
+  [
+    $
+      min quad
+      & \
+      "s.t." quad 
+      & \
+      & \
+      & \
+    $
+  ]
+)
 
 *Code*
 
@@ -479,9 +705,8 @@ See `problem_5.py`.
     {
       let e(a, b, c, p) = edge(a, b, "-|>", text(size: 8pt, str(c)), label-pos: p, label-side: center, label-fill: white)
 
-      // Five R rows span 0..4dy; W and P (three rows each) are centred on 2dy
-      let row(i) = (i + 1) * dy        // W/P rows: dy, 2dy, 3dy
-      let rrow(j) = j * dy             // R rows: 0 .. 4dy
+      let row(i) = (i + 1) * dy
+      let rrow(j) = j * dy
 
       for (i, s) in ("93", "88", "95").enumerate() {
         node((0, row(i)), $W_#(i + 1)$, name: label("W" + str(i + 1)))
