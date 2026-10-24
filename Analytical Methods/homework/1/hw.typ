@@ -395,40 +395,118 @@ See `problem_2.py`.
 
 *Sets*
 
-
+- $I = {1, 2, 3, 4}$
 
 *Indices*
 
+- $i in I$: *airports*
 
+Indices cyclic ($i = 5 equiv 1$, $i = 0 equiv 4$)
 
 *Parameters*
 
-- $k = 12000$: total plane fuel *capacity*
-- $e = 600$: *ending fuel level* for each leg
-- Fuel consumption:
-  - $c$: fuel *consumption* (gal/mile)
-  - $f$: fuel *level*
-  - $f_s$: fuel level at the *start* of the leg
-  - $f_e$: fuel level at the *end* of the leg
-  - $macron(l)$: *average* fuel level
+- $m_i$: distance between city $i$ and city $i + 1$ (miles)
 
 $
-  c = macron(f) / 2000
+  M = vec(
+    1500,
+    1700,
+    1300,
+    2700,
+  )
 $
 
+- $p_i$: *price* per gallon ($cent$/gal)
+
 $
-  macron(f) = (f_s + f_e) / 2
+  P = vec(
+    88,
+    15,
+    105,
+    95,
+  )
 $
+
+- $k = 12000$: plane fuel *capacity* (gallons)
+- $r = 600$: fuel *reserve* (gallons)
 
 *Decision Variables*
 
+- $x_i gt.eq 0$: how much fuel to put into the plane at airport $i$ (gallons)
+- $s_i gt.eq 0$: fuel level at start of leg $i$, after refuelling at airport $i$ (gallons)
+- $e_i gt.eq 0$: - $e_i gt.eq 0$: fuel level at end of leg $i$, on arrival at airport $i + 1$ before refuelling (gallons)
 
+*Fuel-burn relation*
+
+$
+  s_i - e_i = m_i (1 + ((s_i + e_i) \/ 2) / 2000)
+$
 
 *Model*
 
-
-
-*Code*
+#grid(
+  columns: 2,
+  align: center + top,
+  column-gutter: 1fr,
+  [
+    $
+      min quad 
+      &sum_(i in I) p_i x_i \
+      "s.t." quad
+      &s_i = e_(i-1) + x_i quad &&forall i in I quad "balance" \
+      &s_i - e_i = m_i (1 + (s_i + e_i) / 4000) quad &&forall i in I quad "consumption" \
+      &s_i lt.eq k quad &&forall i in I quad "capacity" \
+      &e_i gt.eq r quad &&forall i in I quad "reserve" \
+      &x_i gt.eq 0 quad &&forall i in I \
+      &s_i gt.eq 0 quad &&forall i in I \
+      &e_i gt.eq 0 quad &&forall i in I 
+    $
+  ],
+  [
+    $
+      min quad 
+      &p_1 x_1 + p_2 x_2 + p_3 x_3 + p_4 x_4  \
+      "s.t." quad
+      &cases(
+        reverse: #true, gap: #0.75em,
+        s_2 = e_1 + x_2,
+        s_3 = e_2 + x_3,
+        s_4 = e_3 + x_4,
+        s_1 = e_4 + x_1,
+      ) quad "balance"
+      \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        s_1 - e_1 = m_1 (1 + (s_1 + e_1) / 4000),
+        s_2 - e_2 = m_2 (1 + (s_2 + e_2) / 4000),
+        s_3 - e_3 = m_3 (1 + (s_3 + e_3) / 4000),
+        s_4 - e_4 = m_4 (1 + (s_4 + e_4) / 4000),
+      ) quad "consumption"
+      \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        s_1 lt.eq k,
+        s_2 lt.eq k,
+        s_3 lt.eq k,
+        s_4 lt.eq k,
+      ) quad "capacity"
+      \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        e_1 gt.eq r,
+        e_2 gt.eq r,
+        e_3 gt.eq r,
+        e_4 gt.eq r,
+      ) quad "reserve"
+      \
+      &x_1, x_2, x_3, x_4 gt.eq 0 \
+      \
+      &s_1, s_2, s_3, s_4 gt.eq 0 \
+      \
+      &e_1, e_2, e_3, e_4 gt.eq 0 
+    $
+  ]
+)
 
 
 
@@ -812,7 +890,7 @@ $
 #grid(
   columns: 2,
   column-gutter: 3em,
-  align: center + horizon,
+  align: center,
   [
     $
       min quad 
@@ -826,7 +904,42 @@ $
     $
   ],
   [
-
+    $
+      min quad 
+      &c_(1 1) x_(1 1) + c_(1 2) x_(1 2) + \
+      &c_(2 1) x_(2 1) + c_(2 2) x_(2 2) + \
+      &c_(3 1) x_(3 1) + c_(3 2) x_(3 2) + \
+      &c_(1 1) y_(1 1) + c_(1 2) y_(1 2) + c_(1 3) y_(1 3) + \
+      &c_(2 1) y_(2 1) + c_(2 2) y_(2 2) + c_(2 3) y_(2 3) \
+      \
+      "s.t." quad
+      &cases(
+        reverse: #true, gap: #0.75em,
+        &x_(1 1) + x_(1 2) lt.eq S_1,
+        &x_(2 1) + x_(2 2) lt.eq S_2,
+        &x_(3 1) + x_(3 2) lt.eq S_3,
+      ) quad "supply"
+      \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        &y_(1 1) + y_(2 1) = D_1,
+        &y_(1 2) + y_(2 2) = D_2,
+        &y_(1 3) + y_(2 3) = D_3,
+      ) quad "demand"
+      \
+      &cases(
+        reverse: #true, gap: #0.75em,
+        &x_(1 1) + x_(2 1) + x_(3 1) = y_(1 1) + y_(1 2) + y_(1 3),
+        &x_(1 2) + x_(2 2) + x_(3 2) = y_(2 1) + y_(2 2) + y_(2 3),
+      ) quad "conservation"
+      \
+      &x_(1 1), x_(1 2), \
+      &x_(2 1), x_(2 2), \
+      &x_(3 1), x_(3 2) gt.eq 0 \
+      \
+      &y_(1 1), y_(1 2), y_(1 3), \
+      &y_(2 1), y_(2 2), y_(2 3) gt.eq 0 \
+    $
   ]
 )
 
