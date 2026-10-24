@@ -508,14 +508,41 @@ $
   ]
 )
 
-
-
 *Code*
 
 See `problem_3.py`.
 
 *Solution*
 
+#let results = toml("code/results/problem_3.toml")
+
+#let objective = results.summary.objective
+
+#table(
+  columns: 2,
+  fill: (x, y) => if x == 0 and y == 0 { luma(222) },
+  [Objective], [#objective],
+)
+
+#figure(
+  table(
+    columns: 6,
+    fill: (x, y) => if y == 0 { luma(222) },
+    table.header([*Variable*], [*Value*], [*Reduced\ Cost*], [*Objective\ Coef*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
+    ..results.variables.map(row => row.values().map(val => [#val])).flatten(),
+  ),
+  caption: [Variables]
+)
+
+#figure(
+  table(
+    columns: 7,
+    fill: (x, y) => if y == 0 { luma(222) },
+    table.header([*Name*], [*Value*], [*Shadow\ Price*], [*RHS*], [*Slack*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
+    ..results.constraints.map(row => row.values().map(val => [#val])).flatten()
+  ),
+  caption: [Constraints]
+)
 
 = Problem 4
 
@@ -665,7 +692,45 @@ See `problem_4.py`.
 
 *Solution*
 
+#let results = toml("code/results/problem_4.toml")
 
+#let objective = results.summary.objective
+
+#table(
+  columns: 2,
+  fill: (x, y) => if x == 0 and y == 0 { luma(222) },
+  [Objective], [#objective],
+)
+
+#figure(
+  table(
+    columns: 6,
+    fill: (x, y) => if y == 0 { luma(222) },
+    table.header([*Variable*], [*Value*], [*Reduced\ Cost*], [*Objective\ Coef*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
+    ..results.variables.map(row => row.values().map(val => [#val])).flatten(),
+  ),
+  caption: [Variables]
+)
+
+#figure(
+  table(
+    columns: 7,
+    fill: (x, y) => if y == 0 { luma(222) },
+    table.header([*Name*], [*Value*], [*Shadow\ Price*], [*RHS*], [*Slack*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
+    ..results.constraints.map(row => row.values().map(val => [#val])).flatten()
+  ),
+  caption: [Constraints]
+)
+
+#figure(
+  table(
+    columns: 2,
+    fill: (x, y) => if y == 0 { luma(222) },
+    table.header([*Edge*], [*Cost*]),
+    ..results.summary.c.pairs().flatten().map(v => [#v]),
+  ),
+  caption: [Cost]
+)
 
 = Problem 5
 
@@ -949,6 +1014,51 @@ See `problem_6.py`.
 
 *Solution*
 
+#let results = toml("code/results/problem_6.toml")
+
+#let objective = results.summary.objective
+
+#table(
+  columns: 2,
+  fill: (x, y) => if x == 0 and y == 0 { luma(222) },
+  [Objective], [#objective],
+)
+
+#figure(
+  table(
+    columns: 6,
+    fill: (x, y) => if y == 0 { luma(222) },
+    table.header([*Variable*], [*Value*], [*Reduced\ Cost*], [*Objective\ Coef*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
+    ..results.variables.map(row => row.values().map(val => [#val])).flatten(),
+  ),
+  caption: [Variables]
+)
+
+#figure(
+  table(
+    columns: 7,
+    table.header([*Name*], [*Value*], [*Shadow\ Price*], [*RHS*], [*Slack*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
+    ..results.constraints.map(c => (
+      c.name, c.value, c.shadow_price, c.rhs, c.slack, c.allow_increase, c.allow_decrease,
+    ).map(v => [#v])).flatten()
+  ),
+  caption: [Constraints]
+)
+
+#figure(
+  table(
+    columns: 2,
+    fill: (x, y) => if y == 0 { luma(222) },
+    table.header([*Edge*], [*Cost*]),
+    ..results.summary.C_ij.enumerate().map(((i, row)) =>
+      row.enumerate().map(((j, v)) => ([x[#i,#j]], [#v]))
+    ).flatten(),
+    ..results.summary.C_jk.enumerate().map(((j, row)) =>
+      row.enumerate().map(((k, v)) => ([y[#j,#k]], [#v]))
+    ).flatten(),
+  ),
+  caption: [Cost]
+)
 
 = Problem 7
 
@@ -1141,3 +1251,48 @@ See `problem_7.py`.
 *Solution*
 
 
+#let results = toml("code/results/problem_7.toml")
+
+#let objective = results.summary.objective
+
+#table(
+  columns: 2,
+  fill: (x, y) => if x == 0 and y == 0 { luma(222) },
+  [Objective], [#objective],
+)
+
+#figure(
+  table(
+    columns: 6,
+    fill: (x, y) => if y == 0 { luma(222) },
+    table.header([*Variable*], [*Value*], [*Reduced\ Cost*], [*Objective\ Coef*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
+    ..results.variables.map(row => row.values().map(val => [#val])).flatten(),
+  ),
+  caption: [Variables]
+)
+
+#figure(
+  table(
+    columns: 7,
+    table.header([*Name*], [*Value*], [*Shadow\ Price*], [*RHS*], [*Slack*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
+    ..results.constraints.map(c => (
+      c.name, c.value, c.shadow_price, c.rhs, c.slack, c.allow_increase, c.allow_decrease,
+    ).map(v => [#v])).flatten()
+  ),
+  caption: [Constraints]
+)
+
+#figure(
+  table(
+    columns: 4,
+    align: (left, right, right, right),
+    fill: (x, y) => if y == 0 { luma(222) },
+    table.header([*Path*], [$k=0$], [$k=1$], [$k=2$]),
+    ..results.summary.C_ijk.enumerate().map(((i, M)) =>
+      M.enumerate().map(((j, row)) =>
+        ([x[#i,#j,·]], ..row.map(v => [#v]))
+      )
+    ).flatten(),
+  ),
+  caption: [Path costs $c_(i j k)$],
+)

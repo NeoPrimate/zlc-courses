@@ -48,10 +48,13 @@ m.optimize()
 assert m.Status == GRB.OPTIMAL
 
 
-def clean(v):
-    """Gurobi uses ±1e100 for infinity; TOML supports inf natively."""
+def clean(v, ndigits=4):
+    """Map Gurobi's ±1e100 to ±inf and round finite values."""
     v = float(v)
-    return math.copysign(math.inf, v) if abs(v) >= 1e30 else v
+    if abs(v) >= 1e30:
+        return math.copysign(math.inf, v)
+    v = round(v, ndigits)
+    return 0.0 if v == 0 else v   # turns -0.0 into 0.0
 
 
 variables = []

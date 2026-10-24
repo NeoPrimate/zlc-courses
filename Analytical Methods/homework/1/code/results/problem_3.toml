@@ -1,0 +1,258 @@
+[summary]
+objective = 1445163.7736
+status = "optimal"
+k = 12000
+r = 600
+e0 = 600
+
+[summary.M]
+1 = 1500
+2 = 1700
+3 = 1300
+4 = 2700
+
+[summary.P]
+1 = 88
+2 = 15
+3 = 105
+4 = 95
+
+[[variables]]
+name = "x[1]"
+value = 3120.0
+reduced_cost = 0.0
+obj_coef = 88.0
+allow_increase = inf
+allow_decrease = 81.1818
+
+[[variables]]
+name = "x[2]"
+value = 11400.0
+reduced_cost = 0.0
+obj_coef = 15.0
+allow_increase = 4.5283
+allow_decrease = inf
+
+[[variables]]
+name = "x[3]"
+value = 0.0
+reduced_cost = 56.6038
+obj_coef = 105.0
+allow_increase = inf
+allow_decrease = 56.6038
+
+[[variables]]
+name = "x[4]"
+value = 10522.145
+reduced_cost = 0.0
+obj_coef = 95.0
+allow_increase = 111.1111
+allow_decrease = 22.029
+
+[[variables]]
+name = "s[1]"
+value = 3720.0
+reduced_cost = 0.0
+obj_coef = 0.0
+allow_increase = inf
+allow_decrease = 81.1818
+
+[[variables]]
+name = "s[2]"
+value = 12000.0
+reduced_cost = 0.0
+obj_coef = 0.0
+allow_increase = 4.5283
+allow_decrease = inf
+
+[[variables]]
+name = "s[3]"
+value = 3649.1228
+reduced_cost = 0.0
+obj_coef = 0.0
+allow_increase = 11.2223
+allow_decrease = 56.6038
+
+[[variables]]
+name = "s[4]"
+value = 11400.0
+reduced_cost = 0.0
+obj_coef = 0.0
+allow_increase = inf
+allow_decrease = 95.0
+
+[[variables]]
+name = "e[1]"
+value = 600.0
+reduced_cost = 0.0
+obj_coef = 0.0
+allow_increase = inf
+allow_decrease = 178.6
+
+[[variables]]
+name = "e[2]"
+value = 3649.1228
+reduced_cost = 0.0
+obj_coef = 0.0
+allow_increase = 11.2223
+allow_decrease = inf
+
+[[variables]]
+name = "e[3]"
+value = 877.855
+reduced_cost = 0.0
+obj_coef = 0.0
+allow_increase = 22.029
+allow_decrease = 111.1111
+
+[[variables]]
+name = "e[4]"
+value = 600.0
+reduced_cost = 0.0
+obj_coef = 0.0
+allow_increase = inf
+allow_decrease = 489.6154
+
+[[constraints]]
+name = "balance[1]"
+value = 600.0
+shadow_price = -88.0
+rhs = 600.0
+slack = 0.0
+allow_increase = 3120.0
+allow_decrease = inf
+
+[[constraints]]
+name = "balance[2]"
+value = 0.0
+shadow_price = -15.0
+rhs = 0.0
+slack = 0.0
+allow_increase = 11400.0
+allow_decrease = inf
+
+[[constraints]]
+name = "balance[3]"
+value = 0.0
+shadow_price = -48.3962
+rhs = 0.0
+slack = 0.0
+allow_increase = 8350.8772
+allow_decrease = 545.4191
+
+[[constraints]]
+name = "balance[4]"
+value = 0.0
+shadow_price = -95.0
+rhs = 0.0
+slack = 0.0
+allow_increase = 10522.145
+allow_decrease = inf
+
+[[constraints]]
+name = "consumption[1]"
+value = 1500.0
+shadow_price = 140.8
+rhs = 1500.0
+slack = 0.0
+allow_increase = 5175.0
+allow_decrease = 1950.0
+
+[[constraints]]
+name = "consumption[2]"
+value = 1700.0
+shadow_price = 33.9623
+rhs = 1700.0
+slack = 0.0
+allow_increase = 777.2222
+allow_decrease = 11900.0
+
+[[constraints]]
+name = "consumption[3]"
+value = 1300.0
+shadow_price = 71.6981
+rhs = 1300.0
+slack = 0.0
+allow_increase = 368.1579
+allow_decrease = 13941.8421
+
+[[constraints]]
+name = "consumption[4]"
+value = 2700.0
+shadow_price = 292.3077
+rhs = 2700.0
+slack = 0.0
+allow_increase = 195.0
+allow_decrease = 3419.6971
+
+[[constraints]]
+name = "capacity[1]"
+value = 3720.0
+shadow_price = 0.0
+rhs = 12000.0
+slack = 8280.0
+allow_increase = inf
+allow_decrease = 8280.0
+
+[[constraints]]
+name = "capacity[2]"
+value = 12000.0
+shadow_price = -4.5283
+rhs = 12000.0
+slack = 0.0
+allow_increase = 20695.6522
+allow_decrease = 1351.6908
+
+[[constraints]]
+name = "capacity[3]"
+value = 3649.1228
+shadow_price = 0.0
+rhs = 12000.0
+slack = 8350.8772
+allow_increase = inf
+allow_decrease = 8350.8772
+
+[[constraints]]
+name = "capacity[4]"
+value = 11400.0
+shadow_price = 0.0
+rhs = 12000.0
+slack = 600.0
+allow_increase = inf
+allow_decrease = 600.0
+
+[[constraints]]
+name = "reserve[1]"
+value = 600.0
+shadow_price = 178.6
+rhs = 600.0
+slack = 0.0
+allow_increase = 3763.6364
+allow_decrease = 600.0
+
+[[constraints]]
+name = "reserve[2]"
+value = 3649.1228
+shadow_price = 0.0
+rhs = 600.0
+slack = 3049.1228
+allow_increase = 3049.1228
+allow_decrease = inf
+
+[[constraints]]
+name = "reserve[3]"
+value = 877.855
+shadow_price = 0.0
+rhs = 600.0
+slack = 277.855
+allow_increase = 277.855
+allow_decrease = inf
+
+[[constraints]]
+name = "reserve[4]"
+value = 600.0
+shadow_price = 489.6154
+rhs = 600.0
+slack = 0.0
+allow_increase = 116.4179
+allow_decrease = 600.0

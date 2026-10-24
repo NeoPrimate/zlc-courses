@@ -1,0 +1,298 @@
+[summary]
+objective = 12400.0
+status = "optimal"
+C_ijk = [
+    [
+        [
+            22,
+            24,
+            26,
+        ],
+        [
+            17,
+            21,
+            21,
+        ],
+        [
+            16,
+            17,
+            24,
+        ],
+    ],
+    [
+        [
+            21,
+            23,
+            25,
+        ],
+        [
+            21,
+            25,
+            25,
+        ],
+        [
+            21,
+            22,
+            29,
+        ],
+    ],
+]
+flow_ijk = [
+    [
+        [
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            200.0,
+            100.0,
+            0.0,
+        ],
+    ],
+    [
+        [
+            0.0,
+            0.0,
+            0.0,
+        ],
+        [
+            0.0,
+            0.0,
+            300.0,
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+        ],
+    ],
+]
+flow_in_ij = [
+    [
+        0.0,
+        0.0,
+        300.0,
+    ],
+    [
+        0.0,
+        300.0,
+        0.0,
+    ],
+]
+flow_out_jk = [
+    [
+        0.0,
+        0.0,
+        0.0,
+    ],
+    [
+        0.0,
+        0.0,
+        300.0,
+    ],
+    [
+        200.0,
+        100.0,
+        0.0,
+    ],
+]
+
+[[variables]]
+name = "x[0,0,0]"
+value = 0.0
+reduced_cost = 6.0
+obj_coef = 22.0
+allow_increase = inf
+allow_decrease = 6.0
+
+[[variables]]
+name = "x[0,0,1]"
+value = 0.0
+reduced_cost = 7.0
+obj_coef = 24.0
+allow_increase = inf
+allow_decrease = 7.0
+
+[[variables]]
+name = "x[0,0,2]"
+value = 0.0
+reduced_cost = 6.0
+obj_coef = 26.0
+allow_increase = inf
+allow_decrease = 6.0
+
+[[variables]]
+name = "x[0,1,0]"
+value = 0.0
+reduced_cost = 1.0
+obj_coef = 17.0
+allow_increase = inf
+allow_decrease = 1.0
+
+[[variables]]
+name = "x[0,1,1]"
+value = 0.0
+reduced_cost = 4.0
+obj_coef = 21.0
+allow_increase = inf
+allow_decrease = 4.0
+
+[[variables]]
+name = "x[0,1,2]"
+value = 0.0
+reduced_cost = 1.0
+obj_coef = 21.0
+allow_increase = inf
+allow_decrease = 1.0
+
+[[variables]]
+name = "x[0,2,0]"
+value = 200.0
+reduced_cost = 0.0
+obj_coef = 16.0
+allow_increase = 1.0
+allow_decrease = 0.0
+
+[[variables]]
+name = "x[0,2,1]"
+value = 100.0
+reduced_cost = 0.0
+obj_coef = 17.0
+allow_increase = 0.0
+allow_decrease = inf
+
+[[variables]]
+name = "x[0,2,2]"
+value = 0.0
+reduced_cost = 4.0
+obj_coef = 24.0
+allow_increase = inf
+allow_decrease = 4.0
+
+[[variables]]
+name = "x[1,0,0]"
+value = 0.0
+reduced_cost = 0.0
+obj_coef = 21.0
+allow_increase = inf
+allow_decrease = 0.0
+
+[[variables]]
+name = "x[1,0,1]"
+value = 0.0
+reduced_cost = 1.0
+obj_coef = 23.0
+allow_increase = inf
+allow_decrease = 1.0
+
+[[variables]]
+name = "x[1,0,2]"
+value = 0.0
+reduced_cost = 0.0
+obj_coef = 25.0
+allow_increase = inf
+allow_decrease = 0.0
+
+[[variables]]
+name = "x[1,1,0]"
+value = 0.0
+reduced_cost = 0.0
+obj_coef = 21.0
+allow_increase = inf
+allow_decrease = 0.0
+
+[[variables]]
+name = "x[1,1,1]"
+value = 0.0
+reduced_cost = 3.0
+obj_coef = 25.0
+allow_increase = inf
+allow_decrease = 3.0
+
+[[variables]]
+name = "x[1,1,2]"
+value = 300.0
+reduced_cost = 0.0
+obj_coef = 25.0
+allow_increase = 0.0
+allow_decrease = inf
+
+[[variables]]
+name = "x[1,2,0]"
+value = 0.0
+reduced_cost = 0.0
+obj_coef = 21.0
+allow_increase = 0.0
+allow_decrease = 1.0
+
+[[variables]]
+name = "x[1,2,1]"
+value = 0.0
+reduced_cost = 0.0
+obj_coef = 22.0
+allow_increase = inf
+allow_decrease = 0.0
+
+[[variables]]
+name = "x[1,2,2]"
+value = 0.0
+reduced_cost = 4.0
+obj_coef = 29.0
+allow_increase = inf
+allow_decrease = 4.0
+
+[[constraints]]
+name = "supply[0]"
+sense = "<="
+value = 300.0
+shadow_price = -5.0
+rhs = 300.0
+slack = 0.0
+allow_increase = 0.0
+allow_decrease = 0.0
+
+[[constraints]]
+name = "supply[1]"
+sense = "<="
+value = 300.0
+shadow_price = 0.0
+rhs = 300.0
+slack = 0.0
+allow_increase = inf
+allow_decrease = 0.0
+
+[[constraints]]
+name = "demand[0]"
+sense = "=="
+value = 200.0
+shadow_price = 21.0
+rhs = 200.0
+slack = 0.0
+allow_increase = 0.0
+allow_decrease = 0.0
+
+[[constraints]]
+name = "demand[1]"
+sense = "=="
+value = 100.0
+shadow_price = 22.0
+rhs = 100.0
+slack = 0.0
+allow_increase = 0.0
+allow_decrease = 0.0
+
+[[constraints]]
+name = "demand[2]"
+sense = "=="
+value = 300.0
+shadow_price = 25.0
+rhs = 300.0
+slack = 0.0
+allow_increase = 0.0
+allow_decrease = 300.0
