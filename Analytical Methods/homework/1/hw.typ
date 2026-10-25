@@ -938,7 +938,7 @@ See `problem_5.py`.
 
 *Solution*
 
-#let results = toml("code/results/problem_4.toml")
+#let results = toml("code/results/problem_5.toml")
 
 #let objective = results.summary.objective
 
@@ -968,14 +968,28 @@ See `problem_5.py`.
   caption: [Constraints]
 )
 
+#let s = results.summary
+#let by-quarter(M) = M.enumerate().map(((j, r)) => ([Q#(j + 1)], ..r.map(v => [#v]))).flatten()
+
 #figure(
   table(
-    columns: 2,
+    columns: 3,
     fill: (x, y) => if y == 0 { luma(222) },
-    table.header([*Edge*], [*Cost*]),
-    ..results.summary.c.pairs().flatten().map(v => [#v]),
+    table.header([*Quarter*], [*A21*], [*B32*]),
+    ..by-quarter(s.C_jm),
   ),
-  caption: [Cost]
+  caption: [Production cost],
+)
+
+#figure(
+  table(
+    columns: 5,
+    fill: (x, y) => if y == 0 { luma(222) },
+    table.header([*Quarter*], [*Produce A21*], [*Produce B32*], [*Inventory A21*], [*Inventory B32*]),
+    ..s.production_jm.zip(s.inventory_jm).enumerate().map(((j, (p, y))) =>
+      ([Q#(j + 1)], ..(p + y).map(v => [#v]))).flatten(),
+  ),
+  caption: [Production plan],
 )
 
 = Problem 6
