@@ -738,6 +738,53 @@ See `problem_4.py`.
 
 = Problem 5
 
+#align(center)[
+  #let dx = 3
+  #let dy = 1.5
+
+  #let C  = ((8000, 10000), (8800, 11000), (9680, 12100))
+  #let H  = ((400, 500), (440, 550), (484, 605))
+  #let D  = ((1200, 380), (2500, 1500), (1800, 1200))
+  #let K  = (4000, 3500, 2000)
+  #let Y0 = (100, 80)
+  #let E  = (300, 200)
+
+  #diagram(
+    node-shape: circle,
+    node-stroke: 0.5pt,
+    {
+      let e(a, b, c, p: 0.5) = edge(a, b, "-|>", text(size: 8pt, str(c)), label-pos: p, label-side: center, label-fill: white)
+      let t(s) = text(size: 8pt, s)
+
+      for (m, name) in ("A", "B").enumerate() {
+        let r = m * 2 * dy
+        let off = if m == 0 { -0.8 } else { 0.8 }
+
+        node((0, r), t(str(Y0.at(m))), stroke: none, name: label(name + "0"))
+        node((4 * dx, r), t[$gt.eq$ #E.at(m)], stroke: none, name: label(name + "E"))
+        edge(label(name + "0"), label(name + "1"), "-|>")
+
+        for j in range(3) {
+          let n = label(name + str(j + 1))
+          node(((j + 1) * dx, r), $#(name)_#(j + 1)$, name: n)
+          node(((j + 1) * dx, r + off), t(str(D.at(j).at(m))), stroke: none, name: label("d" + name + str(j + 1)))
+          edge(n, label("d" + name + str(j + 1)), "-|>")
+          let to = if j < 2 { label(name + str(j + 2)) } else { label(name + "E") }
+          e(n, to, H.at(j).at(m))
+        }
+      }
+
+      for j in range(3) {
+        let p = label("P" + str(j + 1))
+        node(((j + 1) * dx, dy), $P_#(j + 1)$, name: p)
+        node(((j + 1) * dx - 0.8, dy), t(str(K.at(j))), stroke: none)
+        e(p, label("A" + str(j + 1)), C.at(j).at(0))
+        e(p, label("B" + str(j + 1)), C.at(j).at(1))
+      }
+    },
+  )
+]
+
 #table(
   columns: 8,
   inset: 0.5em,
@@ -759,6 +806,15 @@ See `problem_4.py`.
 - $j in J$
 
 *Parameters*
+
+$y^0_i$: *starting inventory* of model $i$
+
+$
+  Y_0 = vec(
+    100,
+    80,
+  )
+$
 
 - $h_(i j)$: *holding cost* of model $i$ in produced in *quarter* $j$
 
@@ -800,6 +856,15 @@ $
   )
 $
 
+- $e_i$: end inventory for model $i$
+
+$
+  E = vec(
+    300,
+    200,
+  )
+$
+
 *Decision Variables*
 
 - $x_(i j)$: number of units of *boat model* $j$ to produce in *quarter* $i$
@@ -813,43 +878,56 @@ $
   column-gutter: 1fr,
   [
     $
-      min quad
-      &sum_(i in I) sum_(j in J) x_(i j) c_(i j) \
-      "s.t." quad 
-      & \
-      & \
-      & \
+      min quad & sum_(i in I) sum_(j in J) (c_(i j) x_(i j) + mc(h_(i j) y_(i j))) \
+      "s.t." quad
+      & y_(i j) = y_(i, j-1) + x_(i j) - d_(i j) quad && forall i in I, j in J quad && "balance" \
+      & sum_(i in I) x_(i j) lt.eq k_j quad && forall j in J quad && "capacity" \
+      & y_(i 3) gt.eq e_i quad && forall i in I quad && "end inventory" \
+      & y_(i 0) = y^0_i quad && forall i in I quad && "initial inventory" \
+      & x_(i j), y_(i j) gt.eq 0 quad && forall i in I, j in J
     $
   ],
   [
     $
       min quad
       &x_(1 1) c_(1 1) + x_(1 2) c_(1 2) + x_(1 3) c_(1 3) + \
-      &x_(2 1) c_(2 1) + x_(2 2) c_(2 2) + x_(2 3) c_(2 3) \
+      &x_(2 1) c_(2 1) + x_(2 2) c_(2 2) + x_(2 3) c_(2 3) + \
+      mc(
+        &y_(1 1) h_(1 1) + y_(1 2) h_(1 2) + y_(1 3) h_(1 3) + \
+        &y_(2 1) h_(2 1) + y_(2 2) h_(2 2) + y_(2 3) h_(2 3) \
+      )
       "s.t." quad
       \
       &cases(
         reverse: #true, gap: #0.75em,
-        x_(1 1) &gt.eq d_(1 1),
-        x_(1 2) + y_(1 1) &gt.eq d_(1 2),
-        x_(1 3) + y_(1 1) + y_(1 2) &gt.eq d_(1 3),
+        y_(1 1) = y^0_1 + x_(1 1) - d_(1 1),
+        y_(1 2) = y_(1 1) + x_(1 2) - d_(1 2),
+        y_(1 3) = y_(1 2) + x_(1 3) - d_(1 3),
         ,
-        x_(2 1) &gt.eq d_(2 1),
-        x_(2 2) + y_(2 1) &gt.eq d_(2 2),
-        x_(2 3) + y_(2 1) + y_(2 2) &gt.eq d_(2 3),
-      ) quad "demand" 
+        y_(2 1) = y^0_2 + x_(2 1) - d_(2 1),
+        y_(2 2) = y_(2 1) + x_(2 2) - d_(2 2),
+        y_(2 3) = y_(2 2) + x_(2 3) - d_(2 3),
+      ) quad "balance" 
       \
       &cases(
         reverse: #true, gap: #0.75em,
-        ,
-        ,
-      ) quad "holding" 
+        x_(1 1) + x_(2 1) lt.eq k_1,
+        x_(1 2) + x_(2 2) lt.eq k_2,
+        x_(1 3) + x_(2 3) lt.eq k_3,
+      ) quad "capacity" 
       \
       &cases(
         reverse: #true, gap: #0.75em,
-        x_(1 3) gt.eq 300,
-        x_(2 3) gt.eq 200,
+        y_(1 2) + x_(1 3) - d_(1 3) gt.eq e_1,
+        y_(2 2) + x_(2 3) - d_(2 3) gt.eq e_2,
       ) quad "end inventory"
+      \
+      \
+      &x_(1 1), x_(1 2), x_(1 3), \
+      &x_(2 1), x_(2 2), x_(2 3) gt.eq 0
+      \
+      &y_(1 1), y_(1 2), y_(1 3), \
+      &y_(2 1), y_(2 2), y_(2 3) gt.eq 0
     $
   ]
 )
@@ -860,6 +938,45 @@ See `problem_5.py`.
 
 *Solution*
 
+#let results = toml("code/results/problem_4.toml")
+
+#let objective = results.summary.objective
+
+#table(
+  columns: 2,
+  fill: (x, y) => if x == 0 and y == 0 { luma(222) },
+  [Objective], [#objective],
+)
+
+#figure(
+  table(
+    columns: 6,
+    fill: (x, y) => if y == 0 { luma(222) },
+    table.header([*Variable*], [*Value*], [*Reduced\ Cost*], [*Objective\ Coef*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
+    ..results.variables.map(row => row.values().map(val => [#val])).flatten(),
+  ),
+  caption: [Variables]
+)
+
+#figure(
+  table(
+    columns: 8,
+    fill: (x, y) => if y == 0 { luma(222) },
+    table.header([*Name*], [*Sense*], [*Value*], [*Shadow\ Price*], [*RHS*], [*Slack*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
+    ..results.constraints.map(row => row.values().map(val => [#val])).flatten()
+  ),
+  caption: [Constraints]
+)
+
+#figure(
+  table(
+    columns: 2,
+    fill: (x, y) => if y == 0 { luma(222) },
+    table.header([*Edge*], [*Cost*]),
+    ..results.summary.c.pairs().flatten().map(v => [#v]),
+  ),
+  caption: [Cost]
+)
 
 = Problem 6
 

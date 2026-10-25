@@ -1,0 +1,270 @@
+[summary]
+objective = 85456200.0
+status = "optimal"
+C_jm = [
+    [
+        8000,
+        10000,
+    ],
+    [
+        8800,
+        11000,
+    ],
+    [
+        9680,
+        12100,
+    ],
+]
+H_jm = [
+    [
+        400,
+        500,
+    ],
+    [
+        440,
+        550,
+    ],
+    [
+        484,
+        605,
+    ],
+]
+production_jm = [
+    [
+        1100.0,
+        2900.0,
+    ],
+    [
+        3200.0,
+        300.0,
+    ],
+    [
+        1400.0,
+        0.0,
+    ],
+]
+inventory_jm = [
+    [
+        0.0,
+        2600.0,
+    ],
+    [
+        700.0,
+        1400.0,
+    ],
+    [
+        300.0,
+        200.0,
+    ],
+]
+total_production_j = [
+    4000.0,
+    3500.0,
+    1400.0,
+]
+
+[[variables]]
+name = "x[0,0]"
+value = 1100.0
+reduced_cost = 0.0
+obj_coef = 8000.0
+allow_increase = inf
+allow_decrease = 100.0
+
+[[variables]]
+name = "x[0,1]"
+value = 2900.0
+reduced_cost = 0.0
+obj_coef = 10000.0
+allow_increase = 100.0
+allow_decrease = inf
+
+[[variables]]
+name = "x[1,0]"
+value = 3200.0
+reduced_cost = 0.0
+obj_coef = 8800.0
+allow_increase = 100.0
+allow_decrease = 110.0
+
+[[variables]]
+name = "x[1,1]"
+value = 300.0
+reduced_cost = 0.0
+obj_coef = 11000.0
+allow_increase = 110.0
+allow_decrease = 100.0
+
+[[variables]]
+name = "x[2,0]"
+value = 1400.0
+reduced_cost = 0.0
+obj_coef = 9680.0
+allow_increase = 110.0
+allow_decrease = 440.0
+
+[[variables]]
+name = "x[2,1]"
+value = 0.0
+reduced_cost = 110.0
+obj_coef = 12100.0
+allow_increase = inf
+allow_decrease = 110.0
+
+[[variables]]
+name = "y[0,0]"
+value = 0.0
+reduced_cost = 100.0
+obj_coef = 400.0
+allow_increase = inf
+allow_decrease = 100.0
+
+[[variables]]
+name = "y[0,1]"
+value = 2600.0
+reduced_cost = 0.0
+obj_coef = 500.0
+allow_increase = 100.0
+allow_decrease = inf
+
+[[variables]]
+name = "y[1,0]"
+value = 700.0
+reduced_cost = 0.0
+obj_coef = 440.0
+allow_increase = 440.0
+allow_decrease = 110.0
+
+[[variables]]
+name = "y[1,1]"
+value = 1400.0
+reduced_cost = 0.0
+obj_coef = 550.0
+allow_increase = 110.0
+allow_decrease = 12595.0
+
+[[variables]]
+name = "y[2,0]"
+value = 300.0
+reduced_cost = 0.0
+obj_coef = 484.0
+allow_increase = inf
+allow_decrease = 10164.0
+
+[[variables]]
+name = "y[2,1]"
+value = 200.0
+reduced_cost = 0.0
+obj_coef = 605.0
+allow_increase = inf
+allow_decrease = 12595.0
+
+[[constraints]]
+name = "balance_q1[0]"
+sense = "=="
+value = -1100.0
+shadow_price = -8940.0
+rhs = -1100.0
+slack = 0.0
+allow_increase = 300.0
+allow_decrease = 600.0
+
+[[constraints]]
+name = "balance_q1[1]"
+sense = "=="
+value = -300.0
+shadow_price = -10940.0
+rhs = -300.0
+slack = 0.0
+allow_increase = 300.0
+allow_decrease = 600.0
+
+[[constraints]]
+name = "balance[0,0]"
+sense = "=="
+value = -2500.0
+shadow_price = -9240.0
+rhs = -2500.0
+slack = 0.0
+allow_increase = 1400.0
+allow_decrease = 600.0
+
+[[constraints]]
+name = "balance[0,1]"
+sense = "=="
+value = -1500.0
+shadow_price = -11440.0
+rhs = -1500.0
+slack = 0.0
+allow_increase = 300.0
+allow_decrease = 600.0
+
+[[constraints]]
+name = "balance[1,0]"
+sense = "=="
+value = -1800.0
+shadow_price = -9680.0
+rhs = -1800.0
+slack = 0.0
+allow_increase = 1400.0
+allow_decrease = 600.0
+
+[[constraints]]
+name = "balance[1,1]"
+sense = "=="
+value = -1200.0
+shadow_price = -11990.0
+rhs = -1200.0
+slack = 0.0
+allow_increase = 300.0
+allow_decrease = 600.0
+
+[[constraints]]
+name = "capacity[0]"
+sense = "<="
+value = 4000.0
+shadow_price = -940.0
+rhs = 4000.0
+slack = 0.0
+allow_increase = 300.0
+allow_decrease = 600.0
+
+[[constraints]]
+name = "capacity[1]"
+sense = "<="
+value = 3500.0
+shadow_price = -440.0
+rhs = 3500.0
+slack = 0.0
+allow_increase = 1400.0
+allow_decrease = 600.0
+
+[[constraints]]
+name = "capacity[2]"
+sense = "<="
+value = 1400.0
+shadow_price = 0.0
+rhs = 2000.0
+slack = 600.0
+allow_increase = inf
+allow_decrease = 600.0
+
+[[constraints]]
+name = "end_inventory[0]"
+sense = ">="
+value = 300.0
+shadow_price = 10164.0
+rhs = 300.0
+slack = 0.0
+allow_increase = 600.0
+allow_decrease = 300.0
+
+[[constraints]]
+name = "end_inventory[1]"
+sense = ">="
+value = 200.0
+shadow_price = 12595.0
+rhs = 200.0
+slack = 0.0
+allow_increase = 600.0
+allow_decrease = 200.0
