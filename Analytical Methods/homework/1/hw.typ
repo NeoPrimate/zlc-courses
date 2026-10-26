@@ -24,6 +24,10 @@
 
 #let mc(x) = text(fill: red, x)
 
+#h(1fr) Carmen Carrera \
+#h(1fr) Divya Bhojane \
+#h(1fr) Vladimir Borel \
+
 = Problem 1
 
 #align(center)[
@@ -38,7 +42,7 @@
 
     node((-0.5, (dy * 0)), [6], stroke: none, name: <R1s>)
     node((-0.5, (dy * 1)), [5], stroke: none, name: <R2s>)
-    node((-0.5, (dy * 2)), [7], stroke: none, name: <R3s>)
+    node((-0.5, (dy * 2)), [6], stroke: none, name: <R3s>)
     
     node((dx, (dy * 0)), [$D_1$], stroke: 0.5pt, name: <D1>)
     node((dx, (dy * 1)), [$D_2$], stroke: 0.5pt, name: <D2>)
@@ -113,10 +117,10 @@
   [
     $
       min quad
-      &c sum_((i, j) in A) x_(i j) mc(+ p sum_(j in J^S) s_j) \
+      &sum_(i in I) sum_(j in J) c_(i j) x_(i j) mc(+ p sum_(j in J^S) s_j) \
       "s.t." quad
-      &sum_(j: (i, j) in A) x_(i j) <= S_i quad &&forall i in I quad quad &&"capacity" \
-      &sum_(i: (i, j) in A) x_(i j) mc(+ s_j [j in J^S]) = D_j quad &&forall j in J quad quad &&"demand" \
+      &sum_(j in J) x_(i j) <= S_i quad &&forall i in I quad quad &&"capacity" \
+      &sum_(i in I) x_(i j) mc(+ s_j [j in J^S]) = D_j quad &&forall j in J quad quad &&"demand" \
       &x_(i j) >= 0 quad &&forall (i, j) in A \
       &s_j >= 0 quad &&forall j in J^S
     $
@@ -124,13 +128,13 @@
   [
     $
       min quad
-      &c (x_(1 1) + x_(1 2) + x_(1 3) + x_(2 1) + x_(2 2) + x_(2 3) + x_(3 1) + x_(3 2) + x_(3 3))\ 
+      &c (x_(1 1) + x_(1 2) + x_(2 1) + x_(2 2) + x_(2 3) + x_(3 1) + x_(3 2) + x_(3 3))\ 
       &mc(+ p (s_2 + s_3)) \
       "s.t."
       \
       &cases(
         reverse: #true, gap: #0.75em,
-        x_(1 1) + x_(1 2) + x_(1 3) &<= S_1,
+        x_(1 1) + x_(1 2) &<= S_1,
         x_(2 1) + x_(2 2) + x_(2 3) &<= S_2,
         x_(3 1) + x_(3 2) + x_(3 3) &<= S_3,
       ) quad "capacity" 
@@ -139,10 +143,10 @@
         reverse: #true, gap: #0.75em,
         x_(1 1) + x_(2 1) + x_(3 1) &= D_1,
         x_(1 2) + x_(2 2) + x_(3 2) mc(+ s_2) &= D_2,
-        x_(1 3) + x_(2 3) + x_(3 3) mc(+ s_3) &= D_3,
+        x_(2 3) + x_(3 3) mc(+ s_3) &= D_3,
       ) quad "demand" 
       \
-      &x_(1 1), x_(1 2), x_(1 3), x_(2 1), x_(2 2), x_(2 3), x_(3 1), x_(3 2), x_(3 3) >= 0 \
+      &x_(1 1), x_(1 2), x_(2 1), x_(2 2), x_(2 3), x_(3 1), x_(3 2), x_(3 3) >= 0 \
       &s_2, s_3 >= 0
     $
 
@@ -292,7 +296,7 @@ $
 *Decision variables*
 
 - $y$: number of *products* produced
-- $x_(i j)$: how many *parts* $j$ are produced in *department* $i$
+- $x_(i j)$: how many *parts* $i$ are produced in *department* $j$
 
 *Model*
 
@@ -436,7 +440,7 @@ $
 
 - $x_i gt.eq 0$: how much fuel to put into the plane at airport $i$ (gallons)
 - $s_i gt.eq 0$: fuel level at start of leg $i$, after refuelling at airport $i$ (gallons)
-- $e_i gt.eq 0$: - $e_i gt.eq 0$: fuel level at end of leg $i$, on arrival at airport $i + 1$ before refuelling (gallons)
+- $e_i gt.eq 0$: fuel level at end of leg $i$, on arrival at airport $i + 1$ before refuelling (gallons)
 
 *Fuel-burn relation*
 
@@ -546,6 +550,11 @@ See `problem_3.py`.
   ),
   caption: [Constraints]
 )
+
+- The model takes advantage of the low fuel price in Houston (\$0.15/gal) by filling the tank completely (12,000 gallons). Even though the plane burns more fuel on the Houston-NYC leg because it is heavier, it is still cheaper than buying fuel elsewhere.
+- No fuel is bought in NYC, the most expensive airport, since the fuel from Houston is enough to reach Miami.
+- In LA and Miami the plane only buys the fuel needed to arrive at the next airport with the minimum 600 gallons, because carrying extra fuel increases consumption.
+- The total fuel cost per round trip is \$14,451.64.
 
 = Problem 4
 
@@ -718,9 +727,9 @@ See `problem_4.py`.
 
 #figure(
   table(
-    columns: 7,
+    columns: 8,
     fill: (x, y) => if y == 0 { luma(222) },
-    table.header([*Name*], [*Value*], [*Shadow\ Price*], [*RHS*], [*Slack*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
+    table.header([*Name*], [*Sense*], [*Value*], [*Shadow\ Price*], [*RHS*], [*Slack*], [*Allowable\ Increase*], [*Allowable\ Decrease*]),
     ..results.constraints.map(row => row.values().map(val => [#val])).flatten()
   ),
   caption: [Constraints]
@@ -735,6 +744,20 @@ See `problem_4.py`.
   ),
   caption: [Cost]
 )
+
+2. 
+
+Check the allowable range. The change is -10 and the allowable decrease is 20. Since 10 ≤ 20, the current basis stays optimal. Use the shadow price to get the cost change. The shadow price of -20 means each extra ton of Durham demand lowers total cost by \$20. That happens because each ton Durham takes can be shipped there cheaply instead of somewhere more expensive. Going the other way, removing 10 tons raises cost:
+
+$
+  Delta "Cost" = (-20) x (-10) = 200
+$
+
+The routes and basis don't change, but the shipment amounts and the cost do. New total cost (\$14,300) and the new shipments (Charlotte → Richmond 80, Charlotte → Durham 10).
+
+3. 
+
+Lexington's shadow price is \$70 and holds for up to 20 extra tons, so each added ton serves one more ton of Richmond's unmet demand at \$70 of extra shipping cost. Raleigh is cheaper at \$60 per ton (also up to 20 tons), and Charlotte matches Lexington at \$70 but holds for 50 tons, enough to cover Richmond's whole shortfall. So the numbers argue against the board's choice: add capacity at Raleigh first, then Charlotte, and avoid Danville at \$90.
 
 = Problem 5
 
@@ -816,7 +839,7 @@ $
   )
 $
 
-- $h_(i j)$: *holding cost* of model $i$ in produced in *quarter* $j$
+- $h_(i j)$: *holding cost* of model $i$ produced in *quarter* $j$
 
 $
   H = mat(
@@ -867,7 +890,7 @@ $
 
 *Decision Variables*
 
-- $x_(i j)$: number of units of *boat model* $j$ to produce in *quarter* $i$
+- $x_(i j)$: number of units of *boat model* $i$ to produce in *quarter* $j$
 - $y_(i j)$: *inventory* of boats $i$ at the end of *quarter* $j$
 
 *Model*
@@ -1032,7 +1055,7 @@ See `problem_5.py`.
 
       e(<P1>, <R1>, 5.15, 0.5)
       e(<P1>, <R2>, 5.69, 0.25)
-      e(<P1>, <R3>, 5.13, 0.25)
+      e(<P1>, <R3>, 6.13, 0.25)
       e(<P1>, <R4>, 5.63, 0.75)
       e(<P1>, <R5>, 5.80, 0.75)
 
@@ -1059,9 +1082,9 @@ See `problem_5.py`.
 
 *Indices*
 
-- $i in I$: 
-- $j in J$: 
-- $k in K$: 
+- $i in I$: set of *wells*
+- $j in J$: set of *pumps*
+- $k in K$: set of *refineries*
 
 *Parameters*
 
@@ -1069,15 +1092,19 @@ See `problem_5.py`.
 
 $
   C^(I J) = mat(
-
+    1.52, 1.60, 1.40;
+    1.70, 1.63, 1.55;
+    1.45, 1.57, 1.30;
   )
 $
 
-- $c_(j k)$: cost of transport from well $j$ to pump $k$
+- $c_(j k)$: cost of transport from pump $j$ to refineries $k$
 
 $
   C^(J K) = mat(
-    
+    5.15, 5.69, 6.13, 5.63, 5.80;
+    5.12, 5.47, 6.05, 6.12, 5.71;
+    5.32, 6.16, 6.25, 6.17, 5.87;
   )
 $
 
@@ -1104,7 +1131,7 @@ $
 *Decision Variables*
 
 - $x_(i j)$: quantity flowing from well $i$ to pump $j$
-- $y_(j k)$: quantity flowing from pump $j$ to pump $k$
+- $y_(j k)$: quantity flowing from pump $j$ to refinery $k$
 
 *Model*
 
@@ -1217,6 +1244,14 @@ See `problem_6.py`.
   caption: [Cost]
 )
 
+Add the capacity to Well 3. Each extra TBD there replaces more expensive oil from Well 2 with cheaper oil from Well 3.
+
+How much it's worth investing:
+
+- Up to \$0.13 per TBD of new capacity, in the same cost units as the tariffs.
+- That rate holds for up to 29 TBD of extra capacity (the allowable increase), so Well 3 can go up to 124 TBD.
+- At most, that adds up to 29 x \$0.13 = \$3.77 in total savings. That is the most we should pay, in the same per-day units as the tariffs.
+
 = Problem 7
 
 #align(center)[
@@ -1306,7 +1341,7 @@ $
   )
 $
 
-- $D_k$: demand of sink node $i$
+- $D_k$: demand of sink node $k$
 
 $
   D = vec(
@@ -1331,7 +1366,7 @@ $
     [
     $
       min quad
-      &sum_(i in I) sum_(j in J) c_(i j) x_(i j) + sum_(j in J) sum_(k in K) c_(j k) x_(j k) \
+      &sum_(i in I) sum_(j in J) c_(i j) x_(i j) + sum_(j in J) sum_(k in K) c_(j k) y_(j k) \
       "s.t." quad
       &sum_(j in J) x_(i j) lt.eq S_i quad &&forall i in I quad &&"supply" \
       &sum_(j in J) y_(j k) gt.eq D_k quad &&forall k in K quad &&"demand" \
@@ -1472,3 +1507,269 @@ See `problem_7.py`.
   ),
   caption: [Path costs $c_(i j k)$],
 )
+
+= Appendix
+
+== Problem 1
+
+```py
+import numpy as np
+import gurobipy as gp
+from gurobipy import GRB
+
+S = np.array([6, 5, 6])
+D = np.array([4, 8, 7])
+M = np.array([
+    [120, 180, 0],
+    [300, 100, 80],
+    [200, 250, 120],
+])
+C = 10
+P = 5000
+
+m = gp.Model("refineries")
+
+x = m.addMVar(M.shape, lb=0, name="x")
+s = m.addMVar(D.shape, name="s")
+
+m.setObjective((C * M * x).sum() + (P * s).sum(), GRB.MINIMIZE)
+
+m.addConstr(x.sum(axis=1) <= S, name="capacity")
+m.addConstr(x.sum(axis=0) + s == D, name="demand")
+m.addConstr(s[0] == 0, name="no_shortage_1")
+m.addConstr(x[0, 2] == 0, name="no_arc_1_3")
+
+m.optimize()
+```
+
+#align(center)[
+  #image("./excel/p1.png", width: 80%)
+]
+
+== Problem 2
+
+```py
+import numpy as np
+import gurobipy as gp
+from gurobipy import GRB
+
+S = np.array([150, 150])
+R = np.array([3, 1, 2])
+T = np.array([
+    [0.8, 0.6],
+    [0.3, 0.4],
+    [0.5, 0.6],
+])
+
+m = gp.Model("products")
+
+x = m.addMVar(T.shape, name="x")
+y = m.addVar(name="y")
+
+m.setObjective(y, GRB.MAXIMIZE)
+
+m.addConstr(x.sum(axis=1) >= R * y, name="requirements")
+m.addConstr((T * x).sum(axis=0) <= S, name="capacity")
+
+m.optimize()
+```
+
+#align(center)[
+  #image("./excel/p2.png", width: 80%)
+]
+
+== Problem 3
+
+```py
+import numpy as np
+import gurobipy as gp
+from gurobipy import GRB
+
+M = np.array([1500, 1700, 1300, 2700])
+P = np.array([88, 15, 105, 95])
+K = 12000
+E0 = 600
+
+m = gp.Model("plane")
+
+x = m.addMVar(M.shape, name="x")
+s = m.addMVar(M.shape, name="s")
+e = m.addMVar(M.shape, name="e")
+
+m.setObjective((P * x).sum(axis=0), GRB.MINIMIZE)
+
+m.addConstr(s[0] == e[-1] + x[0], name="balance_0")
+m.addConstr(s[1:] == e[:-1] + x[1:], name="balance")
+m.addConstr(s - e == M * (1 + (s + e) / 4000), name="consumption")
+m.addConstr(s <= K, name="capacity")
+m.addConstr(e >= E0, name="reserve")
+
+m.optimize()
+```
+
+#align(center)[
+  #image("./excel/p3.png", width: 80%)
+]
+
+== Problem 4
+
+```py
+import numpy as np
+import gurobipy as gp
+from gurobipy import GRB
+
+K = np.array([90, 50, 80, 60])
+D = np.array([120, 100, 110])
+C = np.array([
+    [70, 100, 50],
+    [120, 90, 40],
+    [70, 30, 110],
+    [90, 50, 70],
+])
+
+m = gp.Model("steel")
+
+m = gp.Model("steel")
+
+x = m.addMVar(C.shape, name="x")
+
+m.setObjective((C * x).sum(), GRB.MINIMIZE)
+
+m.addConstr(x.sum(axis=1) == K, name="supply")
+m.addConstr(x.sum(axis=0) <= D, name="demand")
+
+m.optimize()
+```
+
+#align(center)[
+  #image("./excel/p4.png", width: 80%)
+]
+
+== Problem 5
+
+```py
+import numpy as np
+import gurobipy as gp
+from gurobipy import GRB
+
+H = np.array([
+    [400, 500],
+    [440, 550],
+    [484, 605],
+])
+C = np.array([
+    [8000, 10000],
+    [8800, 11000],
+    [9680, 12100],
+])
+D = np.array([
+    [1200, 380],
+    [2500, 1500],
+    [1800, 1200]
+])
+K = np.array([
+    4000,
+    3500,
+    2000,
+])
+E = np.array([
+    300,
+    200,
+])
+Y0 = np.array([100, 80])
+
+m = gp.Model("steel_path")
+
+x = m.addMVar(C.shape, name="x")
+y = m.addMVar(H.shape, name="y")
+
+m.setObjective((C * x + H * y).sum(), GRB.MINIMIZE)
+
+m.addConstr(y[0] == Y0 + x[0] - D[0], name="balance_0")
+m.addConstr(y[1:] == y[:-1] + x[1:] - D[1:], name="balance")
+m.addConstr(x.sum(axis=1) <= K, name="capacity")
+m.addConstr(y[-1] >= E, name="end_inventory")
+
+m.optimize()
+```
+
+#align(center)[
+  #image("./excel/p5.png", width: 80%)
+]
+
+== Problem 6
+
+```py
+import numpy as np
+import gurobipy as gp
+from gurobipy import GRB
+
+S = np.array([93, 88, 95])
+D = np.array([30, 57, 48, 91, 48])
+C_ij = np.array([
+    [1.52, 1.60, 1.40],
+    [1.70, 1.63, 1.55],
+    [1.45, 1.57, 1.30],
+])
+C_jk = np.array([
+    [5.15, 5.69, 6.13, 5.63, 5.80],
+    [5.12, 5.47, 6.05, 6.12, 5.71],
+    [5.32, 6.16, 6.25, 6.17, 5.87],
+])
+
+m = gp.Model("steel")
+
+x = m.addMVar(C_ij.shape, name="x")
+y = m.addMVar(C_jk.shape, name="y")
+
+m.setObjective((C_ij * x).sum() + (C_jk * y).sum(), GRB.MINIMIZE)
+
+m.addConstr(x.sum(axis=1) <= S, name="supply")
+m.addConstr(y.sum(axis=0) == D, name="demand")
+m.addConstr(x.sum(axis=0) == y.sum(axis=1), name="balance")
+
+m.optimize()
+```
+
+#align(center)[
+  #image("./excel/p6.png", width: 80%)
+]
+
+== Problem 7
+
+```py
+import numpy as np
+import gurobipy as gp
+from gurobipy import GRB
+
+S = np.array([300, 300])
+D = np.array([200, 100, 300])
+C_ij = np.array([
+    [16, 10, 12],
+    [15, 14, 17],
+])
+C_jk = np.array([
+    [6, 8, 10],
+    [7, 11, 11],
+    [4, 5, 12],
+])
+
+C = C_ij[:, :, None] + C_jk[None, :, :]
+
+m = gp.Model("steel_paths")
+
+m.Params.OutputFlag = 0
+
+x = m.addMVar(C.shape, name="x")
+
+m.setObjective((C * x).sum(), GRB.MINIMIZE)
+
+supply = m.addConstr(x.sum(axis=2).sum(axis=1) <= S, name="supply")
+demand = m.addConstr(x.sum(axis=0).sum(axis=0) == D, name="demand")
+
+m.optimize()
+```
+
+#align(center)[
+  #image("./excel/p7.png", width: 80%)
+]
