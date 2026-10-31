@@ -11,86 +11,23 @@
 
 #let mc(x) = text(fill: red, x)
 
-= Logistics Systems
-
-Warehouse as buffers:
-- Economies of scale
-  - Aggregation
-- Fixed costs (stop start factory) v. Holding cost (use warehouse as buffer for holding)
-
-Defining a problem:
-- Sets
-- Indices 
-
 = Defining the problem
 
 *Sets*
 
-- $V_1$: set of origins (supply nodes)
-- $V_2$: set of potential facilities (intermediate nodes)
-- $V_3$: set of destinations (demand nodes)
+- $S$: Number of potential silos
+
+- $R$: Number of farms to be served
+
+- $T$: Time periods within the planning horizon
 
 *Indices*
 
-- $i in V_1$: origin
-- $j in V_2$: potential facility
-- $r in V_3$: destination
+- $j in S$
 
-*Parameters*
+- $r in R$
 
-- $a_(i j r)$: unit transport cost from $i$ to $r$ through $j$
-- $f_j$: fixed cost of opening facility $j$
-- $g_j$: marginal (per-unit) handling cost at facility $j$
-- $q_j$: capacity of facility $j$
-- $o_i$: supply available at origin $i$
-- $d_r$: demand at destination $r$
-- $"IC"_i$: unit cost of supply left unused at origin $i$ (inventory)
-- $"SC"_r$: unit cost of demand left unmet at destination $r$ (shortage)
-
-*Decision variables*
-
-- $y_j = cases(
-    1 "if facility" j "is activated",
-    0 "otherwise"
-  )$
-- $s_(i j r) >= 0$: quantity flowing from $i$ to $r$ through $j$
-- $s_i^+ >= 0$: supply left unused at origin $i$
-- $s_r^- >= 0$: demand left unmet at destination $r$
-
-*Model*
-
-$
-  min quad
-  & overbrace(sum_(i in V_1) sum_(j in V_2) sum_(r in V_3) a_(i j r) s_(i j r), "transport")
-  + overbrace(sum_(j in V_2) (f_j y_j + g_j sum_(i in V_1) sum_(r in V_3) s_(i j r)), "facilities")
-  + overbrace(sum_(i in V_1) "IC"_i s_i^+, "inventory")
-  + overbrace(sum_(r in V_3) "SC"_r s_r^-, "shortage") \
-
-  "s.t." quad
-  & sum_(j in V_2) sum_(r in V_3) s_(i j r) + mc(s_i^+) = o_i, quad quad && forall i in V_1 \
-  & sum_(i in V_1) sum_(j in V_2) s_(i j r) + mc(s_r^-) = d_r, quad quad && forall r in V_3 \
-  & sum_(i in V_1) sum_(r in V_3) s_(i j r) <= q_j y_j, quad quad && forall j in V_2 \
-  & y_j in {0, 1}, quad quad && forall j in V_2 \
-  & s_(i j r), s_i^+, s_r^- >= 0, quad quad && forall i in V_1, j in V_2, r in V_3
-$
-
-= Defining the problem
-
-*Sets*
-
-- $V_1$: Number of potential silos
-
-- $V_2$: Number of farms to be served
-
-- $V_3$: Time periods within the planning horizon
-
-*Indices*
-
-- $j in V_1$
-
-- $r in V_2$
-
-- $t, w in V_3$
+- $t, w in T$
 
 *Parameters*
 
@@ -112,44 +49,68 @@ $
 
 - $"SV"_(j t)$: *salvage value* of silo $j$ in period $t$
 
-- $G_(j t)$: average *marginal cost* of processing one quintal in the silo $j$, in period $t$
+- $G_(j t)$: (variable) average *marginal cost* of processing one quintal in the silo $j$, in period $t$
 
 *Decision Variables*
 
 - $"IA"_(j t) = cases(
-  1 "if silo" j "is initially activated in period" t,
-  0 "otherwise"
-)$ 
+  1 #[if silo $j$ is initially activated in period $t$],
+  0 #[otherwise]
+)$
 
-- $"FC"_(j r) = cases(
-  1 "if silo" j "is closes in period" t,
-  0 "otherwise"
-)$ 
+- $"FC"_(j t) = cases(
+  1 #[if silo $j$ is closes in period $t$],
+  0 #[otherwise],
+)$
 
 - $Y_(j t) = cases(
-  1 "if silo" j "is active in period" t,
-  0 "otherwise"
+  1 #[if silo $j$ is active in period $t$],
+  0 #[otherwise],
 )$
 
 - $"LC"_(j t) = cases(
-  1 "if silo" j "operates at low capacity in period" t,
-  0 "otherwise"
-)$ 
+  1 #[if silo $j$ operates at low capacity in period $t$],
+  0 #[otherwise],
+)$
 
 - $"HC"_(j t) = cases(
-  1 "if silo" j "operates at high capacity in period" t,
-  0 "otherwise"
-)$ 
+  1 #[if silo $j$ operates at high capacity in period $t$],
+  0 #[otherwise],
+)$
 
 - $S_(j r t)$: material flow (quintals) from silo $j$ to farm $r$ in period $t$
 
 *Model*
 
+Maximize revenue (Income - Cost)
+
 $
-  max quad 
-  & \
+  max quad
+  \
+  &cases(
+    reverse: #true, gap: #0.75em,
+    sum_(t in T) "FSP"_t sum_(j in S) sum_(r in R) S_(j r t) + quad quad &&#[sales],
+    sum_(j in S) sum_(r in T) "SV"_(j t) "FC"_(j t) - quad quad &&#[salvage],
+
+  ) quad #[revenue]
+  \
+  &cases(
+    reverse: #true, gap: #0.75em,
+    &sum_(j in S) sum_(r in R) sum_(t in T) A_(j r t) S_(j r t) - quad quad &&#[transport (variable)], 
+    &sum_(j in S) sum_(t in T) "CLC"_(j t) "LC"_(j t) - quad quad &&#[setup LO cap (fixed)],
+    &sum_(j in S) sum_(t in T) "CHC"_(j t) "HC"_(j t) - quad quad &&#[setup HI cap (fixed)],
+    &sum_(i in S) sum_(t in T) G_(j t) sum_(r in R) S_(j r t) quad quad &&#[production (variable)],
+  ) quad #[costs]
+  \
   "s.t." quad
-  & \
-  & \
+  &sum_(s in S) A_(s r t) S_(s r t) gt.eq D_(r t) quad &&forall r in R, t in T quad &&#[demand] \
+  &sum_(r in R) S_(s r t) lt.eq Q^L_(j t) quad &&forall s in S, t in T quad &&#[supply (LO)] \
+  &sum_(r in R) S_(s r t) lt.eq Q^H_(j t) quad &&forall s in S, t in T quad &&#[supply (HI)] \
   & \
 $
+
+Income:
+- ??
+- Salvage 
+Cost:
+- Transport 

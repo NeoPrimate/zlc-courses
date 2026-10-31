@@ -1,11 +1,11 @@
-#import "../../lib/imports.typ": *
-#import "/lib/formatting.typ": *
-#import "@local/tystats:0.1.0": norm, poisson, expon
+// #import "../../lib/imports.typ": *
+// #import "/lib/formatting.typ": *
+// #import "@local/tystats:0.1.0": norm, poisson, expon
 
-#import "@preview/tiptoe:0.4.0"
-#import "@preview/komet:0.2.0"
+// #import "@preview/tiptoe:0.4.0"
+// #import "@preview/komet:0.2.0"
 
-#show: formatting
+// #show: formatting
 
 = Finance of Supply Chain Management
 
@@ -1170,6 +1170,9 @@ $
 
 
 
+
+What is my *solution space*?
+- What can I change? (capacity, network, etc.)
 
 
 

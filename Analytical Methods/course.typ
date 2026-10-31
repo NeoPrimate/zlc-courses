@@ -1166,6 +1166,67 @@ $
   &mc(u_i - u_j + 1 lt.eq (n - 1)(1 - x_(i j)) quad && forall i\, j eq.not 1) \
 $
 
+#example([Shipment Consolidation & Dispatching])[
+
+- $k$: order ($k in K$)
+- $i_k$: destination of order $k$
+- $w_k$: weight of order $k$
+- $r_k$: release time of order $k$ (day order $k$ is ready for delivery)
+- $d_k$: deadline for order $k$
+
+- $tau_(k r)$: 
+- $v_k$: 
+- $S_r$: 
+
+2 delivery options:
+- FTL
+- LTL
+
+*Decision Variables*
+
+- $x_(k r t) = cases(
+  1 ,
+  0 ,  
+)$
+
+- $y_(r t) = cases(
+  1 ,
+  0 ,
+)$
+
+- $v_k = cases(
+  1 ,
+  0 ,
+)$
+
+$v_k$ is defined only if $r_k + tau'_k lt.eq d_k$
+
+$
+  min quad
+  &sum_(r in R) sum_(t in T) f_r t_(r t) + sum_(k in K) g_k v_k \
+  "s.t." quad
+  &sum_(k: r_k lt.eq t lt.eq d_k - tau_(k r), i_k in S_r) w_k x_(k r t) lt.eq q_r y_(r t) quad quad &&r in R, t in T \
+  &sum_(r: i_k in S_r) sum_(t: r_k lt.eq t lt.eq d_k - tau_(k r)) x_(k r t) + v_k = 1 quad quad &&k in K \
+  &x_(k r t) in {0, 1} quad quad &&k in K, r in R, t in T \
+  &y_(r t) in {0, 1} quad quad &&r in R, t in T \
+  &v_k in {0, 1}, quad quad &&k in K \
+$
+
+$
+  R = vec(
+    800,
+    750,
+    400,
+    780,
+    830,
+    830,
+    860,
+  )
+$
+
+
+]
+
 #pagebreak()
 
 

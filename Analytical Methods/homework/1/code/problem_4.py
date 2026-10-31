@@ -17,8 +17,6 @@ C = np.array([
 
 m = gp.Model("steel")
 
-m = gp.Model("steel")
-
 x = m.addMVar(C.shape, name="x")
 
 m.setObjective((C * x).sum(), GRB.MINIMIZE)

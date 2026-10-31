@@ -1,0 +1,107 @@
+road = [
+    { from = "Adelaide", to = "Melbourne", units = 30 },
+    { from = "Brisbane", to = "Melbourne", units = 20 },
+    { from = "Brisbane", to = "Sydney", units = 10 },
+]
+
+[summary]
+model = "Oz_Ovis_Dome"
+objective = 2162146.8219178086
+purchase = 1905200.0
+freight = 35100.0
+holding = 18396.821917808218
+road = 950.0
+domes = 202500.0
+domes_site = "Adelaide"
+units_ovis = 4330
+units_domes = 450
+
+[[city]]
+name = "Adelaide"
+demand = 420
+x40 = 0
+x20 = 0
+lcl = 0
+ovis = 0
+domes = 450
+road_in = 0
+road_out = 30
+purchase = 0.0
+freight = 0.0
+holding = 0.0
+road = 300.0
+domes_cost = 202500.0
+total = 202800.0
+unit_cost = 482.85714285714283
+
+[[city]]
+name = "Brisbane"
+demand = 870
+x40 = 4
+x20 = 1
+lcl = 0
+ovis = 900
+domes = 0
+road_in = 0
+road_out = 30
+purchase = 396000.0
+freight = 7400.0
+holding = 3417.5342465753424
+road = 650.0
+domes_cost = 0.0
+total = 407467.5342465753
+unit_cost = 468.35348763974173
+
+[[city]]
+name = "Melbourne"
+demand = 1250
+x40 = 6
+x20 = 0
+lcl = 0
+ovis = 1200
+domes = 0
+road_in = 50
+road_out = 0
+purchase = 528000.0
+freight = 10800.0
+holding = 6075.616438356164
+road = 0.0
+domes_cost = 0.0
+total = 544875.6164383561
+unit_cost = 435.9004931506849
+
+[[city]]
+name = "Perth"
+demand = 930
+x40 = 4
+x20 = 1
+lcl = 30
+ovis = 930
+domes = 0
+road_in = 0
+road_out = 0
+purchase = 409200.0
+freight = 5950.0
+holding = 3026.9589041095887
+road = 0.0
+domes_cost = 0.0
+total = 418176.9589041096
+unit_cost = 449.65264398291356
+
+[[city]]
+name = "Sydney"
+demand = 1310
+x40 = 6
+x20 = 1
+lcl = 0
+ovis = 1300
+domes = 0
+road_in = 10
+road_out = 0
+purchase = 572000.0
+freight = 10950.0
+holding = 5876.712328767123
+road = 0.0
+domes_cost = 0.0
+total = 588826.7123287672
+unit_cost = 449.4860399456238
