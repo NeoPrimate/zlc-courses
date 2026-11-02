@@ -115,6 +115,60 @@ $
   &x_r in {0, 1} quad &&forall r in R \
 $
 
+*Solution*
+
+#let res = toml("./code/results/p1_results.toml")
+#let mdl = res.model
+
+#let chosen = res.routes.filter(r => r.selected)
+
+Choosing #mdl.trucks of the #mdl.n_routes candidate routes so that each of the #mdl.n_locations locations is visited exactly once gives a minimum total time of #mdl.objective_hours hours.
+ 
+#figure(
+  caption: [Selected routes (one per truck)],
+  table(
+    columns: (auto, auto, 1fr, auto),
+    align: (center, center, left, right),
+    table.header[*Truck*][*Route*][*Delivery sequence*][*Time (h)*],
+    ..chosen.enumerate().map(((k, r)) => (
+      [#(k + 1)],
+      [#r.id],
+      r.stops.join(sym.arrow.r),
+      [#r.time],
+    )).flatten(),
+    table.hline(),
+    table.cell(colspan: 3, align: right)[*Total*],
+    [*#mdl.objective_hours*],
+  ),
+)
+ 
+#figure(
+  caption: [All candidate routes and decision variables $x_j$ (selected rows shaded)],
+  table(
+    columns: (auto, 1fr, auto, auto),
+    align: (center, left, right, center),
+    fill: (_, y) => if y > 0 and res.routes.at(y - 1).selected { luma(225) },
+    table.header[*Route $j$*][*Delivery sequence*][*Time $t_j$ (h)*][*$x_j$*],
+    ..res.routes.map(r => (
+      [#r.id],
+      r.stops.join(sym.arrow.r),
+      [#r.time],
+      [#int(r.selected)],
+    )).flatten(),
+  ),
+)
+ 
+#figure(
+  caption: [Coverage check: each location served exactly once],
+  table(
+    columns: res.locations.len() + 1,
+    align: center,
+    [*Location*], ..res.locations.map(l => [*#l.name*]),
+    [*Route*], ..res.locations.map(l => [#l.route]),
+    [*Visits*], ..res.locations.map(l => [#l.covered]),
+  ),
+)
+
 = Problem 2
 
 *Sets*
@@ -157,6 +211,55 @@ $
   &sum_(s in S) x_(s p) = 1 quad &&forall p in P \
   &x_(s p) in {0, 1} quad &&forall s in S, p in P \
 $
+
+*Solution*
+
+#let res = toml("./code/results/p2_results.toml")
+#let mdl = res.model
+
+Allocating #mdl.total_spots spots across #mdl.n_products products (at most #mdl.max_spots_per_product each) gives a maximum total profit of \$#mdl.objective_millions million.
+
+#figure(
+  caption: [Optimal allocation],
+  table(
+    columns: (1fr, auto, auto),
+    align: (left, center, right),
+    table.header[*Product*][*TV spots*][*Profit (\$M)*],
+    ..res.products.map(p => ([Product #p.id], [#p.spots], fmt(p.profit))).flatten(),
+    table.hline(),
+    [*Total*],
+    [*#res.products.map(p => p.spots).sum()*],
+    [*#mdl.objective_millions*],
+  ),
+)
+ 
+#figure(
+  caption: [Profit table with chosen levels shaded ($x_(s p) = 1$)],
+  table(
+    columns: (auto,) + (1fr,) * mdl.n_products,
+    align: center,
+    fill: (x, y) => if x > 0 and y > 0 and res.x.at(y - 1).at(x - 1) == 1 { luma(215) },
+    table.header(
+      [*Spots $s$*], ..range(mdl.n_products).map(p => [*Product #(p + 1)*]),
+    ),
+    ..res.profit_table.enumerate().map(((s, row)) => ([#s], ..row.map(fmt))).flatten(),
+  ),
+)
+ 
+#figure(
+  caption: [Decision variables $x_(s p)$],
+  table(
+    columns: (auto,) + (1fr,) * mdl.n_products,
+    align: center,
+    table.header(
+      [*Spots $s$*], ..range(mdl.n_products).map(p => [*$x_(s #(p + 1))$*]),
+    ),
+    ..res.x.enumerate().map(((s, row)) => ([#s], ..row.map(v => [#v]))).flatten(),
+    table.hline(),
+    [*$sum_s x_(s p)$*],
+    ..range(mdl.n_products).map(p => [#res.x.map(r => r.at(p)).sum()]),
+  ),
+)
 
 = Problem 3
 
@@ -239,6 +342,69 @@ $
   &y_w in {0, 1} quad &&forall w in W \
 $
 
+*Solution*
+
+#let res = toml("./code/results/p3_results.toml")
+#let mdl = res.model
+#let wh = res.warehouses
+#let num(v) = str(calc.round(v, digits: 2))
+#let usd(v) = [\$#num(v)]
+#let ok(b) = if b [✓] else [✗]
+
+Opening #wh.filter(w => w.open).map(w => w.city).join(" and ") meets all weekly demand at a
+minimum cost of #usd(mdl.objective) per week (#usd(mdl.fixed_cost) fixed + #usd(mdl.shipping_cost) shipping).
+
+#figure(
+  caption: [Warehouse decisions $y_i$ and weekly cost by warehouse (open rows shaded)],
+  table(
+    columns: (1fr, auto, auto, auto, auto, auto),
+    align: (left, center, right, right, right, right),
+    fill: (_, y) => if y > 0 and y <= wh.len() and wh.at(y - 1).open { luma(225) },
+    table.header[*Warehouse*][*$y_i$*][*Shipped / cap.*][*Fixed*][*Shipping*][*Total*],
+    ..wh.map(w => (
+      [#w.city],
+      [#int(w.open)],
+      [#num(w.shipped) / #w.capacity],
+      if w.open { usd(w.fixed_cost) } else [—],
+      usd(w.shipping_cost),
+      usd(w.fixed_cost * int(w.open) + w.shipping_cost),
+    )).flatten(),
+    table.hline(),
+    table.cell(colspan: 3, align: right)[*Total*],
+    [*#usd(mdl.fixed_cost)*], [*#usd(mdl.shipping_cost)*], [*#usd(mdl.objective)*],
+  ),
+)
+ 
+#figure(
+  caption: [Weekly shipments $x_(i j)$ in units (unit cost in brackets)],
+  table(
+    columns: (1fr,) + (auto,) * res.regions.len() + (auto,),
+    align: (left,) + (right,) * (res.regions.len() + 1),
+    table.header([*From \\ To*], ..res.regions.map(r => [*#r*]), [*Shipped*]),
+    ..wh.enumerate().map(((i, w)) => (
+      [#w.city],
+      ..res.x.at(i).zip(res.unit_cost.at(i)).map(((q, c)) =>
+        if q > 0 [*#num(q)* (\$#c)] else { text(fill: luma(140))[0 (\$#c)] }),
+      [#num(w.shipped)],
+    )).flatten(),
+    table.hline(),
+    [*Received*], ..res.demand.map(d => [#num(d.received)]), [],
+    [*Required*], ..res.demand.map(d => [#d.required]), [],
+  ),
+)
+ 
+#figure(
+  caption: [Logical restrictions],
+  table(
+    columns: (1fr, auto, auto),
+    align: (left, left, center),
+    table.header[*Restriction*][*Constraint*][*Holds*],
+    [If New York is opened, Los Angeles must be opened], [$y_"NY" <= y_"LA"$], ok(res.logic.ny_implies_la),
+    [At most two warehouses can be opened], [$sum_i y_i <= 2$], ok(res.logic.max_two),
+    [Either Atlanta or Los Angeles must be opened], [$y_"LA" + y_"ATL" >= 1$], ok(res.logic.atl_or_la),
+  ),
+)
+
 = Problem 4
 
 *Sets*
@@ -296,6 +462,8 @@ $
   &y_k in {0, 1} && forall k in K \
   &z_(k j) in {0, 1} && forall k in K, j in J
 $
+
+*Solution*
 
 = Problem 5
 
@@ -508,4 +676,226 @@ $
   ),
   caption: [Road transfers (Ovis + Domes)]
 )
+
+= Appendix
+
+== Problem 1
+
+```py
+import numpy as np
+import gurobipy as gp
+
+P = np.array([
+    [1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+    [0, 1, 0, 1, 0, 1, 0, 0, 1, 1],
+    [0, 0, 1, 1, 0, 0, 1, 0, 1, 0],
+    [1, 0, 0, 0, 0, 1, 0, 1, 0, 0],
+    [0, 0, 1, 1, 0, 1, 0, 0, 0, 0],
+    [0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 1, 1, 0, 1],
+    [0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+    [0, 1, 0, 1, 0, 0, 1, 0, 0, 0],
+])
+
+T = np.array([
+    6,
+    4,
+    7,
+    5,
+    4,
+    6,
+    5,
+    3,
+    7,
+    6,
+])
+
+MAX = 3
+
+m = gp.Model("speedy")
+
+x = m.addMVar(T.shape, vtype=gp.GRB.BINARY, name="x")
+
+m.setObjective((T * x).sum())
+
+m.addConstr(P @ x == 1, name="")
+m.addConstr(x.sum() == MAX, name="")
+
+m.optimize()
+```
+
+== Problem 2
+
+```py
+import numpy as np
+import gurobipy as gp
+
+R = np.array([
+    [0, 0, 0],
+    [1, 0, -1],
+    [3, 2, 2],
+    [3, 3, 4],
+])
+
+S, P = R.shape
+
+S = np.arange(S)
+
+m = gp.Model("supersuds")
+
+x = m.addMVar(R.shape, vtype=gp.GRB.BINARY, name="x")
+
+m.setObjective((R * x).sum(), sense=gp.GRB.MAXIMIZE)
+
+m.addConstr((S @ x).sum() == 5)
+m.addConstr(x.sum(axis=0) == 1)
+
+m.optimize()
+
+```
+
+== Problem 3
+
+```py
+import numpy as np
+import gurobipy as gp
+
+K = np.array([
+    100,
+    100,
+    100,
+    100,
+])
+
+C = np.array([
+    400,
+    500,
+    300,
+    150,
+])
+
+T = np.array([
+    [20, 40, 50],
+    [48, 15, 26],
+    [26, 35, 18],
+    [24, 50, 35],
+])
+
+D = np.array([
+    80,
+    70,
+    40,
+])
+
+m = gp.Model("wh")
+
+x = m.addMVar(T.shape, name="x")
+y = m.addMVar(K.shape, vtype=gp.GRB.BINARY, name="y")
+
+m.setObjective((T * x).sum() + (C * y).sum(), sense=gp.GRB.MINIMIZE)
+
+m.addConstr(x.sum(axis=0) >= D, name="demand")
+m.addConstr(x.sum(axis=1) <= K * y, name="capacity")
+m.addConstr(y[0] <= y[1], name="ny_implies_la")
+m.addConstr(y.sum() <= 2, name="max_two")
+m.addConstr(y[1] + y[3] >= 1, name="atl_or_la")
+
+m.optimize()
+```
+
+== Problem 5
+
+```py
+import numpy as np
+import gurobipy as gp
+import tomli_w
+
+d = np.array([420, 870, 1250, 930, 1310])
+
+p = np.array([450, 480, 505, 490, 515])
+
+p0 = 440
+
+f = np.array([
+    [2000, 1200],
+    [1600, 1000],
+    [1800, 1100],
+    [1200,  700],
+    [1650, 1050],
+])
+
+g = np.array([25, 20, 23, 15, 22])
+
+q = np.array([200, 100])
+
+tau = np.array([30, 21, 28, 18, 25])
+
+c = np.array([
+    [0, 35, 10, 35, 25],
+    [35, 0, 25, 70, 15],
+    [10, 25, 0, 45, 15],
+    [35, 70, 45, 0, 55],
+    [25, 15, 15, 55, 0],
+])
+
+h = 0.15
+U = 500
+
+I, K = f.shape
+
+############################################################
+############################################################
+
+m1 = gp.Model("Oz_Ovis")
+
+x = m1.addMVar(f.shape, vtype=gp.GRB.INTEGER, name="x")
+y = m1.addMVar(d.shape, name="y")
+
+purchase = (x @ q * p0).sum() + (p0 * y).sum()
+freight  = (f * x).sum() + g @ y
+holding  = (h / 365 * p0 * tau * (x @ q)).sum() + (h / 365 * p0 * tau * y).sum()
+
+m1.setObjective(
+    (
+        purchase +
+        freight +
+        holding
+    ), 
+sense=gp.GRB.MINIMIZE)
+
+m1.addConstr(x @ q + y >= d, name="demand")
+
+m1.optimize()
+
+export(m1, x.X, y.X)
+
+
+############################################################
+############################################################
+
+m2 = gp.Model("Oz_Ovis_Dome")
+
+x = m2.addMVar(f.shape, vtype=gp.GRB.INTEGER, name="x")
+y = m2.addMVar(d.shape, name="y")
+z = m2.addMVar(c.shape, name="z")
+w = m2.addMVar(d.shape, vtype=gp.GRB.BINARY, name="w")
+v = m2.addMVar(d.shape, name="v")
+
+purchase = (x @ q * p0).sum() + (p0 * y).sum()
+freight  = (f * x).sum() + g @ y
+holding  = (h / 365 * p0 * tau * (x @ q)).sum() + (h / 365 * p0 * tau * y).sum()
+road     = (c * z).sum()
+domes    = p @ v
+
+m2.setObjective(purchase + freight + holding + road + domes, gp.GRB.MINIMIZE)
+
+
+m2.addConstr(x @ q + y + v + z.sum(axis=0) >= d + z.sum(axis=1), name="flow")
+m2.addConstr(w.sum() == 1, name="")
+m2.addConstr(v <= U * w, name="")
+
+m2.optimize()
+
+export(m2, x.X, y.X, z.X, v.X)
+```
 

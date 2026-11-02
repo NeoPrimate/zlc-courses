@@ -1,0 +1,105 @@
+regions = [
+    "Region 1",
+    "Region 2",
+    "Region 3",
+]
+y = [
+    0,
+    1,
+    0,
+    1,
+]
+x = [
+    [
+        0.0,
+        0.0,
+        0.0,
+    ],
+    [
+        0.0,
+        70.0,
+        30.0,
+    ],
+    [
+        0.0,
+        0.0,
+        0.0,
+    ],
+    [
+        80.0,
+        0.0,
+        10.0,
+    ],
+]
+unit_cost = [
+    [
+        20,
+        40,
+        50,
+    ],
+    [
+        48,
+        15,
+        26,
+    ],
+    [
+        26,
+        35,
+        18,
+    ],
+    [
+        24,
+        50,
+        35,
+    ],
+]
+demand = [
+    { region = "Region 1", required = 80, received = 80.0 },
+    { region = "Region 2", required = 70, received = 70.0 },
+    { region = "Region 3", required = 40, received = 40.0 },
+]
+
+[model]
+name = "wh"
+status = "OPTIMAL"
+objective = 4750.0
+fixed_cost = 650.0
+shipping_cost = 4100.0
+n_open = 2
+
+[[warehouses]]
+city = "New York"
+open = false
+fixed_cost = 400
+capacity = 100
+shipped = 0.0
+shipping_cost = 0.0
+
+[[warehouses]]
+city = "Los Angeles"
+open = true
+fixed_cost = 500
+capacity = 100
+shipped = 100.0
+shipping_cost = 1830.0
+
+[[warehouses]]
+city = "Chicago"
+open = false
+fixed_cost = 300
+capacity = 100
+shipped = 0.0
+shipping_cost = 0.0
+
+[[warehouses]]
+city = "Atlanta"
+open = true
+fixed_cost = 150
+capacity = 100
+shipped = 90.0
+shipping_cost = 2270.0
+
+[logic]
+ny_implies_la = true
+max_two = true
+atl_or_la = true

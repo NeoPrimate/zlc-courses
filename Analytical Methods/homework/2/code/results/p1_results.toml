@@ -1,0 +1,131 @@
+x = [
+    0,
+    0,
+    0,
+    1,
+    1,
+    0,
+    0,
+    1,
+    0,
+    0,
+]
+locations = [
+    { name = "A", covered = 1, route = 5 },
+    { name = "B", covered = 1, route = 4 },
+    { name = "C", covered = 1, route = 4 },
+    { name = "D", covered = 1, route = 8 },
+    { name = "E", covered = 1, route = 4 },
+    { name = "F", covered = 1, route = 5 },
+    { name = "G", covered = 1, route = 8 },
+    { name = "H", covered = 1, route = 5 },
+    { name = "I", covered = 1, route = 4 },
+]
+
+[model]
+name = "speedy"
+status = "OPTIMAL"
+objective_hours = 12.0
+trucks = 3
+n_routes = 10
+n_locations = 9
+
+[[routes]]
+id = 1
+time = 6
+selected = false
+stops = [
+    "A",
+    "D",
+    "G",
+]
+
+[[routes]]
+id = 2
+time = 4
+selected = false
+stops = [
+    "F",
+    "B",
+    "I",
+]
+
+[[routes]]
+id = 3
+time = 7
+selected = false
+stops = [
+    "H",
+    "E",
+    "C",
+]
+
+[[routes]]
+id = 4
+time = 5
+selected = true
+stops = [
+    "B",
+    "E",
+    "C",
+    "I",
+]
+
+[[routes]]
+id = 5
+time = 4
+selected = true
+stops = [
+    "A",
+    "F",
+    "H",
+]
+
+[[routes]]
+id = 6
+time = 6
+selected = false
+stops = [
+    "D",
+    "B",
+    "E",
+]
+
+[[routes]]
+id = 7
+time = 5
+selected = false
+stops = [
+    "G",
+    "I",
+    "C",
+]
+
+[[routes]]
+id = 8
+time = 3
+selected = true
+stops = [
+    "D",
+    "G",
+]
+
+[[routes]]
+id = 9
+time = 7
+selected = false
+stops = [
+    "A",
+    "B",
+    "C",
+]
+
+[[routes]]
+id = 10
+time = 6
+selected = false
+stops = [
+    "H",
+    "B",
+    "G",
+]

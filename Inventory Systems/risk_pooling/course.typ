@@ -99,3 +99,66 @@ Trade-off:
 
 
 
+#table(
+  columns: (auto, 1fr, 1fr, 1fr),
+  align: (left, left, left, left),
+  [], [Newsvendor], [Order-up-to (OUT)], [$(Q, R)$ continuous review],
+
+  [Setting],
+  [One period, no reorder],
+  [Periodic review every $T$ (here $T = 1$)],
+  [Monitor continuously; order $Q$ when inventory position hits $R$],
+
+  [Decision],
+  [Order quantity $Q$],
+  [Order-up-to level $S$],
+  [Reorder point $R$, order quantity $Q$],
+
+  [Protection period],
+  [The single season],
+  [$L + T = L + 1$],
+  [$L$],
+
+  [$z$ from],
+  [Critical ratio $C_u / (C_u + C_o)$],
+  [Target in-stock probability],
+  [Target CSL],
+
+  [Decision formula],
+  [$Q^* = mu + z sigma$],
+  [$S = mu_(L+1) + z sigma sqrt(L+1)$],
+  [$R = mu L + z sigma sqrt(L)$, #h(0.3em) $Q^* = sqrt((2 mu S) / H)$],
+
+  [Safety stock],
+  [$z sigma$],
+  [$z sigma sqrt(L+1)$],
+  [$z sigma sqrt(L)$],
+
+  [Avg. inventory],
+  [$E["leftover"] = Q - mu + E["lost sales"]$],
+  [$S - mu_(L+1) + E["back"]$],
+  [$Q / 2 + "SS"$],
+
+  [Expected shortage],
+  [$E["lost sales"] = sigma L(z)$],
+  [$E["back"] = sigma sqrt(L+1) L(z)$],
+  [Per cycle: $sigma sqrt(L) L(z)$],
+
+  [Pooled $sigma$],
+  table.cell(colspan: 3, align: center)[
+    $sigma^C = sqrt(sum_i sigma_i^2 + 2 sum_(i < j) rho_(i j) sigma_i sigma_j)$
+    #h(1em) (independent: $sqrt(sum_i sigma_i^2)$)
+  ],
+
+  [What pooling saves],
+  [Mismatch cost (leftovers + lost sales)],
+  [Safety stock and backorders],
+  [Safety stock, plus cycle stock through the EOQ scale effect ($Q prop sqrt(mu)$)],
+
+  [Course example],
+  [—],
+  [Problem 2: $sigma = sqrt(2) dot 65$],
+  [Problem 1: $sigma = sqrt(sum_i sigma_i^2)$],
+)
+
+#text(size: 7pt)[$L(z)$: standard normal loss function.]

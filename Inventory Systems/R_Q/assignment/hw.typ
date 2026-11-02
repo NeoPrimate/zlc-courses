@@ -184,27 +184,21 @@ $
 
 *(i)*
 
-#let L_mean = 2
 #let L_sd = 1.1
-
-#let mu_L = D * L
-#let s_L = calc.sqrt(L * calc.pow(s, 2) + calc.pow(D, 2) * calc.pow(L_sd, 2))
-
-#let SS = norm.ppf(CSL) * s_L
+#let sigma_DL = calc.sqrt(L * calc.pow(s, 2) + calc.pow(D, 2) * calc.pow(L_sd, 2))
+#let SS_i = norm.ppf(CSL) * sigma_DL
+#let SS_fixed = norm.ppf(CSL) * s * calc.sqrt(L)
 
 $
-  L_mu 
-  &= D L \ 
-  &= #L_mean \
-  L_sigma 
-  &= sqrt(L sigma^2 + D^2 L_sigma^2) \
-  &= #L_sd \
+  L = #L, quad s_L = #L_sd \
+  mu_L = D L = #(D * L) \
+  sigma_L = sqrt(L sigma^2 + D^2 s_L^2) = #r(sigma_DL)
 $
 
 $
-  "SS" 
+  "SS"
   &= Phi^(-1)("CSL") sigma_L \
-  &= #result[#r(SS)] \
+  &= #result[#r(SS_i)]
 $
 
 *(j)*
@@ -242,8 +236,10 @@ $
 
 *(l)*
 
+In periodic review the safety stock is larger as it covers the uncertainty over $T + L$ time units; i.e., $T$ units of time more than in the continuous case
 - Periodic review covers demand over $T + L = 3$ weeks
 - Continuous review cover $L = 2$ weeks
+
 
 #[
   = Problem 2
@@ -306,11 +302,9 @@ $
   #let EOQ = calc.sqrt(2 * D * days_per_year * S / H)
 
   - They should not switch
-  - Ordering $T = 2$ 
+  - Ordering $T = 2$ (weeks)
     - #r(p1.c_ord - p2.c_ord) is saved on ordering costs
     - adds #r(p2.c_hold - p1.c_hold) to holding costs
-
-  // - Holding cost dominates: $"EOQ" = sqrt(2 D S / H) approx #r(EOQ)$ gal, about #r(EOQ / D, digits: 1) days of demand, so Cyber should order *more* often than weekly, not less
 ]
 
 #[
@@ -347,6 +341,8 @@ $
   #let back = RQ(Q_EOQ)
   #let lost = RQ(Q_EOQ, lost: true)
 
+  *(a)* What are the optimal order quantity (Q) and reorder point (R) for the backorder and lost sales cases? 
+
   $
     Q_0 = "EOQ" = sqrt((2 D S) / H) = #r(Q_EOQ)
   $
@@ -367,8 +363,17 @@ $
     [Lost sales], [#result[#r(lost.Q)]], [#result[#r(lost.R)]],
   )
 
-  - R and Q are almost the same in both cases
-  - 
+  
+  
+  *(b)* What do you observe? 
+  
+  - $Q approx 249$ and $R approx 192$ in both cases. 
+  - Lost sales gives a slightly lower $Q$ and a slightly higher $R$
 
+  *(c)* What is your intuitive explanation?
+
+  - *$R$ is higher with lost sales:* a backorder is filled from the next delivery and saves some holding cost; a lost sale saves nothing. Each shortage costs $h + b D \/ Q$ instead of $b D \/ Q$, so it pays to hold more SS
+  - *$Q$ is lower with lost sales:* a higher $R$ means a smaller $n(R)$, so $Q = sqrt(2 D (S + b n(R)) \/ h)$ shrinks
+  - *The difference is small:* the critical ratios differ only by $h Q approx 500$ against $b D = 12000$, so $P("stockout")$ moves only from 4.15% to 3.98%.
 ]
 
