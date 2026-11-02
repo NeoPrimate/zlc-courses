@@ -463,8 +463,6 @@ $
   &z_(k j) in {0, 1} && forall k in K, j in J
 $
 
-*Solution*
-
 = Problem 5
 
 *Sets*
@@ -542,9 +540,9 @@ $
 
 - $x_(i k) in ZZ_(>=0)$: type-$k$ containers shipped from Ovis to city $i$
 
-- $y_i >= 0$: units shipped by LCL from Ovis to city $i$
+- $y_i in ZZ_(>=0)$: units shipped by LCL from Ovis to city $i$
 
-- $z_(i j) >= 0$: units moved by road from city $i$ to city $j$
+- $z_(i j) in ZZ_(>=0)$: units moved by road from city $i$ to city $j$
 
 - $w_i in {0, 1}$: 1 if Domes produces in city $i$, 0 otherwise
 
@@ -552,54 +550,72 @@ $
 
 *Models*
 
-1. 
+1. Current practice: ship directly from Ovis (Q1)
 
 $
-  min quad 
+  min quad
   &sum_(i in I) sum_(k in K) q_k x_(i k) p^0 + && quad &&#[*purchase* cost (*container*)] \
   &sum_(i in I) sum_(k in K) f_(i k) x_(i k) + && quad &&#[*freight* cost (*container*)] \
-  &sum_(i in I) p^0 y_i + && quad &&#[*purchase* cost (*LCL*)]  \
-  &sum_(i in I) g_i y_i + && quad &&#[*freight* cost (*LCL*)]  \
-  &sum_(i in I) sum_(k in K) h / 365 p^0 tau_i x_(i k) q_k + && quad &&#[*holding* cost (*container*)]\
-  &sum_(i in I) h / 365 p^0 tau_i y_i && quad &&#[*holding* cost (*LCL*)]\
+  &sum_(i in I) p^0 y_i + && quad &&#[*purchase* cost (*LCL*)] \
+  &sum_(i in I) g_i y_i + && quad &&#[*freight* cost (*LCL*)] \
+  &sum_(i in I) sum_(k in K) h / 365 p^0 tau_i x_(i k) q_k + && quad &&#[*holding* cost (*container*)] \
+  &sum_(i in I) h / 365 p^0 tau_i y_i && quad &&#[*holding* cost (*LCL*)] \
   "s.t." quad
   &sum_(k in K) x_(i k) q_k + y_i >= d_i quad &&forall i in I quad &&#[demand] \
   &x_(i k) in ZZ_(>=0) quad &&forall i in I, k in K \
-  &y_i gt.eq 0 quad &&forall i in I \
+  &y_i in ZZ_(>=0) quad &&forall i in I \
 $
 
-2.
-
-
+2. Ovis with road rebalancing, no Domes (Q2)
 
 $
-  min quad 
+  min quad
   &sum_(i in I) sum_(k in K) q_k x_(i k) p^0 + && quad &&#[*purchase* cost (*container*)] \
   &sum_(i in I) sum_(k in K) f_(i k) x_(i k) + && quad &&#[*freight* cost (*container*)] \
-  &sum_(i in I) p^0 y_i + && quad &&#[*purchase* cost (*LCL*)]  \
-  &sum_(i in I) g_i y_i + && quad &&#[*freight* cost (*LCL*)]  \
+  &sum_(i in I) p^0 y_i + && quad &&#[*purchase* cost (*LCL*)] \
+  &sum_(i in I) g_i y_i + && quad &&#[*freight* cost (*LCL*)] \
   &sum_(i in I) sum_(k in K) h / 365 p^0 tau_i x_(i k) q_k + && quad &&#[*holding* cost (*container*)] \
   &sum_(i in I) h / 365 p^0 tau_i y_i + && quad &&#[*holding* cost (*LCL*)] \
-  &mc(sum_(i in I) sum_(j in I) c_(i j) z_(i j) + quad && &&#[transportation cost (road)]) \
-  &mc(sum_(i in I) p_i v_i quad && &&#[production cost]) \
-
+  &mc(sum_(i in I) sum_(j in I) c_(i j) z_(i j) quad && &&#[transportation cost (road)]) \
   "s.t." quad
+  &mc(sum_(k in K) q_k x_(i k) + y_i + sum_(j in I) z_(j i)
+  >= d_i + sum_(j in I) z_(i j) quad &&forall i in I quad &&#[flow balance]) \
+  &x_(i k) in ZZ_(>=0) quad &&forall i in I, k in K \
+  &y_i in ZZ_(>=0) quad &&forall i in I \
+  &mc(z_(i j) in ZZ_(>=0) quad &&forall i\, j in I) \
+$
 
+3. Ovis with road rebalancing and Domes (Q3, Q4)
+
+$
+  min quad
+  &sum_(i in I) sum_(k in K) q_k x_(i k) p^0 + && quad &&#[*purchase* cost (*container*)] \
+  &sum_(i in I) sum_(k in K) f_(i k) x_(i k) + && quad &&#[*freight* cost (*container*)] \
+  &sum_(i in I) p^0 y_i + && quad &&#[*purchase* cost (*LCL*)] \
+  &sum_(i in I) g_i y_i + && quad &&#[*freight* cost (*LCL*)] \
+  &sum_(i in I) sum_(k in K) h / 365 p^0 tau_i x_(i k) q_k + && quad &&#[*holding* cost (*container*)] \
+  &sum_(i in I) h / 365 p^0 tau_i y_i + && quad &&#[*holding* cost (*LCL*)] \
+  &sum_(i in I) sum_(j in I) c_(i j) z_(i j) + quad && &&#[transportation cost (road)] \
+  &mc(sum_(i in I) p_i v_i quad && &&#[production cost]) \
+  "s.t." quad
   &mc(sum_(k in K) q_k x_(i k) + y_i + v_i + sum_(j in I) z_(j i)
   >= d_i + sum_(j in I) z_(i j) quad &&forall i in I quad &&#[flow balance]) \
-
-
-  &mc(sum_(i in I) w_i = 1 && quad &&#[only one Dome]) \
-  &mc(v_i <= U w_i quad &&forall i in I quad &&#[only produce when open]) \
+  &mc(sum_(i in I) w_i = 1 && quad &&#[only one Domes site]) \
+  &mc(v_i = U w_i quad &&forall i in I quad &&#[produce exactly $U$ at the open site]) \
   &x_(i k) in ZZ_(>=0) quad &&forall i in I, k in K \
-  &y_i gt.eq 0 quad &&forall i in I \
-  &mc(w_i in {0, 1} quad &&forall i in I)\ 
-  &mc(v_i >= 0) quad &&forall i in I \
-  &mc(z_(i j) >= 0 quad &&forall i\, j in I) \
+  &y_i in ZZ_(>=0) quad &&forall i in I \
+  &z_(i j) in ZZ_(>=0) quad &&forall i\, j in I \
+  &mc(w_i in {0, 1} quad &&forall i in I) \
+  &mc(v_i >= 0 quad &&forall i in I) \
 $
 
 #let m1 = toml("./code/results/Oz_Ovis.toml")
-#let m2 = toml("./code/results/Oz_Ovis_Dome.toml")
+#let m2 = toml("./code/results/Oz_Ovis_Road.toml")
+#let m3 = toml("./code/results/Oz_Ovis_Road_Domes.toml")
+
+#let save-road  = m1.summary.objective - m2.summary.objective
+#let save-domes = m2.summary.objective - m3.summary.objective
+#let save-total = m1.summary.objective - m3.summary.objective
 
 = Cost comparison (monthly, \$)
 
@@ -607,33 +623,44 @@ $
 
 #figure(
   table(
-    columns: (auto, 1fr, 1fr, 1fr),
-    align: (left, right, right, right),
-    table.header([*Cost*], [*Ovis only*], [*Ovis + Domes*], [*Difference*]),
+    columns: (auto, 1fr, 1fr, 1fr, 1fr),
+    align: (left, right, right, right, right),
+    table.header(
+      [*Cost*], [*(1) Direct*], [*(2) + Road*], [*(3) + Domes*], [*(3) − (2)*],
+    ),
     ..rows.map(k => (
       k,
       fmt(m1.summary.at(k)),
       fmt(m2.summary.at(k)),
-      fmt(m2.summary.at(k) - m1.summary.at(k)),
+      fmt(m3.summary.at(k)),
+      fmt(m3.summary.at(k) - m2.summary.at(k)),
     )).flatten(),
     table.hline(),
     [*Total*],
     [*#fmt(m1.summary.objective)*],
     [*#fmt(m2.summary.objective)*],
-    [*#fmt(m2.summary.objective - m1.summary.objective)*],
+    [*#fmt(m3.summary.objective)*],
+    [*#fmt(m3.summary.objective - m2.summary.objective)*],
   ),
-  caption: [Summary]
+  caption: [Summary],
 )
 
-1. Oz pays #fmt(m1.summary.objective) to ship directly from Ovis to each city.
+1. Shipping everything directly from Ovis to each city costs Oz Sourcing
+  #fmt(m1.summary.objective) per month.
 
-2. If Oz Sourcing does not engage Domes, the current shipping practice is the best for Ovis.
+2. No. Without Domes, it is cheaper to ship a 20' container to Brisbane
+  instead of LCL and move the surplus by road. This costs
+  #fmt(m2.summary.objective) per month, which saves #fmt(save-road)
+  compared with the current practice.
 
-3. Domes site: *#m2.summary.domes_site*
+3. Oz Sourcing should ask Domes to manufacture in *#m3.summary.domes_site*
+  (#m3.summary.units_domes units per month).
 
-4. Oz Sourcin would save #fmt(calc.abs(m2.summary.objective - m1.summary.objective))
+4. Engaging Domes saves #fmt(save-total) per month compared with the current
+  practice. Of this, #fmt(save-road) comes from road rebalancing alone, so the
+  saving attributable to Domes is #fmt(save-domes) per month.
 
-#figure(
+#let city-table(m, caption) = figure(
   table(
     columns: 9,
     align: (left,) + (right,) * 8,
@@ -641,41 +668,31 @@ $
       [*City*], [*Demand*], [*40'*], [*20'*], [*LCL*],
       [*Domes*], [*In*], [*Out*], [*\$/unit*],
     ),
-    ..m1.city.map(c => (
+    ..m.city.map(c => (
       c.name, str(c.demand), str(c.x40), str(c.x20), str(c.lcl),
       str(c.domes), str(c.road_in), str(c.road_out),
       fmt(c.unit_cost, digits: 2),
     )).flatten(),
   ),
-  caption: [Per-city (Ovis only)]
+  caption: caption,
 )
 
-#figure(
-  table(
-    columns: 9,
-    align: (left,) + (right,) * 8,
-    table.header(
-      [*City*], [*Demand*], [*40'*], [*20'*], [*LCL*],
-      [*Domes*], [*In*], [*Out*], [*\$/unit*],
-    ),
-    ..m2.city.map(c => (
-      c.name, str(c.demand), str(c.x40), str(c.x20), str(c.lcl),
-      str(c.domes), str(c.road_in), str(c.road_out),
-      fmt(c.unit_cost, digits: 2),
-    )).flatten(),
-  ),
-  caption: [Per-city (Ovis + Domes)]
-)
-
-#figure(
+#let road-table(m, caption) = figure(
   table(
     columns: 3,
     align: (left, left, right),
     table.header([*From*], [*To*], [*Units*]),
-    ..m2.road.map(r => (r.from, r.to, str(r.units))).flatten(),
+    ..m.road.map(r => (r.from, r.to, str(r.units))).flatten(),
   ),
-  caption: [Road transfers (Ovis + Domes)]
+  caption: caption,
 )
+
+#city-table(m1, [Per-city plan, (1) direct from Ovis])
+#city-table(m2, [Per-city plan, (2) Ovis + road])
+#city-table(m3, [Per-city plan, (3) Ovis + road + Domes])
+
+#road-table(m2, [Road transfers, (2) Ovis + road])
+#road-table(m3, [Road transfers, (3) Ovis + road + Domes])
 
 = Appendix
 
@@ -724,6 +741,8 @@ m.addConstr(x.sum() == MAX, name="")
 m.optimize()
 ```
 
+#image("code/excel/p1.jpeg")
+
 == Problem 2
 
 ```py
@@ -753,6 +772,8 @@ m.addConstr(x.sum(axis=0) == 1)
 m.optimize()
 
 ```
+
+#image("code/excel/p2.jpeg")
 
 == Problem 3
 
@@ -803,99 +824,111 @@ m.addConstr(y[1] + y[3] >= 1, name="atl_or_la")
 m.optimize()
 ```
 
+#image("code/excel/p3.jpeg")
+
 == Problem 5
 
 ```py
-import numpy as np
+from pathlib import Path
+
 import gurobipy as gp
+import numpy as np
 import tomli_w
 
-d = np.array([420, 870, 1250, 930, 1310])
+# ----------------------------------------------------------------------------
+# Data
+# ----------------------------------------------------------------------------
+cities = ["Adelaide", "Brisbane", "Melbourne", "Perth", "Sydney"]
 
-p = np.array([450, 480, 505, 490, 515])
-
-p0 = 440
-
-f = np.array([
+d   = np.array([420, 870, 1250, 930, 1310])        # monthly demand
+p   = np.array([450, 480, 505, 490, 515])          # Domes unit cost by site
+p0  = 440                                          # Ovis delivered unit cost
+f   = np.array([                                   # $/container [40', 20']
     [2000, 1200],
     [1600, 1000],
     [1800, 1100],
     [1200,  700],
     [1650, 1050],
 ])
-
-g = np.array([25, 20, 23, 15, 22])
-
-q = np.array([200, 100])
-
-tau = np.array([30, 21, 28, 18, 25])
-
-c = np.array([
-    [0, 35, 10, 35, 25],
-    [35, 0, 25, 70, 15],
-    [10, 25, 0, 45, 15],
-    [35, 70, 45, 0, 55],
-    [25, 15, 15, 55, 0],
+g   = np.array([25, 20, 23, 15, 22])               # $/LCL unit
+q   = np.array([200, 100])                         # container capacity
+tau = np.array([30, 21, 28, 18, 25])               # sea lead time (days)
+c   = np.array([                                   # road $/unit, origin x dest
+    [ 0, 35, 10, 35, 25],
+    [35,  0, 25, 70, 15],
+    [10, 25,  0, 45, 15],
+    [35, 70, 45,  0, 55],
+    [25, 15, 15, 55,  0],
 ])
-
-h = 0.15
-U = 500
+h = 0.15                                           # annual interest rate
+U = 500                                            # Domes units per month
 
 I, K = f.shape
+hc = h / 365 * p0 * tau                            # in-transit holding $/unit
 
-############################################################
-############################################################
+# True  -> Domes produces exactly U units ("commission 500 units every month")
+# False -> Domes produces up to U units
+DOMES_EXACT = False
 
-m1 = gp.Model("Oz_Ovis")
-
-x = m1.addMVar(f.shape, vtype=gp.GRB.INTEGER, name="x")
-y = m1.addMVar(d.shape, name="y")
-
-purchase = (x @ q * p0).sum() + (p0 * y).sum()
-freight  = (f * x).sum() + g @ y
-holding  = (h / 365 * p0 * tau * (x @ q)).sum() + (h / 365 * p0 * tau * y).sum()
-
-m1.setObjective(
-    (
-        purchase +
-        freight +
-        holding
-    ), 
-sense=gp.GRB.MINIMIZE)
-
-m1.addConstr(x @ q + y >= d, name="demand")
-
-m1.optimize()
-
-export(m1, x.X, y.X)
+RESULTS = Path("./results")
+RESULTS.mkdir(exist_ok=True)
 
 
-############################################################
-############################################################
+# ----------------------------------------------------------------------------
+# Model
+# ----------------------------------------------------------------------------
+def build(name, road=False, domes=False, exact=DOMES_EXACT):
+    """Single formulation; Q1/Q2/Q3 just switch road and Domes on or off."""
+    m = gp.Model(name)
+    m.Params.OutputFlag = 0
+    m.Params.MIPGap = 0          # default 1e-4 (~$216 here) can hide the answer
 
-m2 = gp.Model("Oz_Ovis_Dome")
+    x = m.addMVar((I, K), vtype=gp.GRB.INTEGER, name="x")   # full containers
+    y = m.addMVar(I, vtype=gp.GRB.INTEGER, name="y")        # LCL units
+    z = m.addMVar((I, I), vtype=gp.GRB.INTEGER, name="z")   # road i -> j
+    v = m.addMVar(I, name="v")                              # Domes units
+    w = m.addMVar(I, vtype=gp.GRB.BINARY, name="w")         # Domes site
 
-x = m2.addMVar(f.shape, vtype=gp.GRB.INTEGER, name="x")
-y = m2.addMVar(d.shape, name="y")
-z = m2.addMVar(c.shape, name="z")
-w = m2.addMVar(d.shape, vtype=gp.GRB.BINARY, name="w")
-v = m2.addMVar(d.shape, name="v")
+    ovis = x @ q + y                                        # units landed
 
-purchase = (x @ q * p0).sum() + (p0 * y).sum()
-freight  = (f * x).sum() + g @ y
-holding  = (h / 365 * p0 * tau * (x @ q)).sum() + (h / 365 * p0 * tau * y).sum()
-road     = (c * z).sum()
-domes    = p @ v
+    purchase = p0 * ovis.sum()
+    freight  = (f * x).sum() + g @ y
+    holding  = hc @ ovis
+    roadcost = (c * z).sum()
+    domescost = p @ v
 
-m2.setObjective(purchase + freight + holding + road + domes, gp.GRB.MINIMIZE)
+    m.setObjective(purchase + freight + holding + roadcost + domescost,
+                   gp.GRB.MINIMIZE)
 
+    # supply + road in - road out >= demand
+    m.addConstr(ovis + v + z.sum(axis=0) - z.sum(axis=1) >= d, name="flow")
 
-m2.addConstr(x @ q + y + v + z.sum(axis=0) >= d + z.sum(axis=1), name="flow")
-m2.addConstr(w.sum() == 1, name="")
-m2.addConstr(v <= U * w, name="")
+    # no shipping a city to itself
+    m.addConstr(z[np.arange(I), np.arange(I)] == 0, name="no_self")
 
-m2.optimize()
+    if not road:
+        m.addConstr(z == 0, name="no_road")
 
-export(m2, x.X, y.X, z.X, v.X)
+    if domes:
+        m.addConstr(w.sum() == 1, name="one_site")
+        if exact:
+            m.addConstr(v == U * w, name="domes_cap")
+        else:
+            m.addConstr(v <= U * w, name="domes_cap")
+    else:
+        m.addConstr(v == 0, name="no_domes")
+        m.addConstr(w == 0, name="no_site")
+
+    m.optimize()
+    if m.Status != gp.GRB.OPTIMAL:
+        raise RuntimeError(f"{name}: status {m.Status}")
+
+    sol = {k: np.round(var.X) if k != "v" else var.X
+           for k, var in dict(x=x, y=y, z=z, v=v).items()}
+    return m, sol
+
 ```
 
+#image("code/excel/p5_0.jpeg")
+
+#image("code/excel/p5.jpeg")
