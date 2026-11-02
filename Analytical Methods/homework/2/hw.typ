@@ -44,7 +44,7 @@
   if neg { "-" + out } else { out }
 }
 
-#h(1fr) Maria \
+#h(1fr) Maria Guadalupe Cordova Gastelum \
 #h(1fr) Vladimir Borel \
 
 = Problem 1
