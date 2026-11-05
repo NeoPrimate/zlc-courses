@@ -109,6 +109,15 @@ LCjt = m.addMVar((J, T), vtype=GRB.BINARY, name="low_cap")      # low capacity i
 HCjt = m.addMVar((J, T), vtype=GRB.BINARY, name="high_cap")     # high capacity in t
 Sjrt = m.addMVar((J, R, T), lb=0.0, name="ship")
 
+m.setObjective(, sense=gp.GRB.MAXIMIZE)
+
+m.addConstr(, name="")
+m.addConstr(, name="")
+m.addConstr(, name="")
+
+
+
+
 
 
 

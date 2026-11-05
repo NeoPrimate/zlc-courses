@@ -44,7 +44,9 @@ $
   E["short"] 
   &= n(R) \ 
   &= sigma_L L(z) \
+  &= #r(e_short)
 $
+
 $
   "SS" 
   &= R - D_L + E["short"] \
@@ -102,30 +104,40 @@ $
 
 *(e)*
 
-- $"CSL" = P(D_L lt.eq R)$, the probability that there is no stockout in a cycle 
-- A cycle that is short by a single unit counts as a complete failure
-- $"FR" = 1 - E[(D_L - R)^+] / Q$, is the share of demand filled from stock
-- A stockout can still fill almost all of its demand and only the units short at the end of the cycle count as lost
-
-$"FR" > "CSL"$:
+- $"CSL" = P(D_L <= R)$, the probability of no stockout in a replenishment cycle
+  - A cycle that is short by a single unit counts as a complete failure
+- $"FR" = 1 - E[(D_L - R)^+] \/ Q$, the share of demand filled directly from stock
+  - A cycle with a stockout can still fill most of its demand; only the units short at the end of the cycle are lost
 
 $
-  E[(D_L - R)⁺] = P(D_L > R) · E[D_L - R | D_L > R]
+  "FR" &= 1 - E[(D_L - R)^+] \/ Q \
+  1 - "FR" &= E[(D_L - R)^+] \/ Q \
+  &= P(D_L > R) dot E[D_L - R mid(|) D_L > R] \/ Q
+$
+
+Why FR usually exceeds CSL:
+
+
+$
+  underbrace(E[(D_L - R)^+], "expected shortage\n per cycle")
+  = underbrace(P(D_L > R), "stockout probability"\ = 1 - "CSL")
+  dot underbrace(E[D_L - R mid(|) D_L > R], "avg. shortage \n given a stockout")
 $
 
 Then:
 
 - $1 - "CSL" = P(D_L > R)$
-- $1 - "FR" = P(D_L > R) · E[D_L - R | D_L > R] / Q$
+- $1 - "FR" = P(D_L > R) dot E[D_L - R mid(|) D_L > R] \/ Q$
 
-So $"FR" > "CSL"$ when: 
+So $"FR" > "CSL"$ exactly when
 
 $
-  E[D_L - R | D_L > R] < Q
+  E[D_L - R mid(|) D_L > R] < Q
 $
 
-- FR is greater than CSL whenever the average shortage in a stockout cycle is smaller than the order quantity (about one cycle's demand)
-- Generally a cycle runs short by a small number at its end
+- FR exceeds CSL whenever the expected shortfall in a stockout cycle is smaller than the order quantity, i.e. smaller than one cycle's demand
+- This is the usual case: a stockout typically falls short by a few units near the end of the cycle (on the order of $sigma_L$), while $Q$ is much larger
+- It can reverse when $Q$ is small relative to $sigma_L$ (frequent, small orders); then FR can fall below CSL
 
 *(f)*
 
@@ -190,7 +202,8 @@ $
 #let SS_fixed = norm.ppf(CSL) * s * calc.sqrt(L)
 
 $
-  L = #L, quad s_L = #L_sd \
+  L = #L \
+  s_L = #L_sd \
   mu_L = D L = #(D * L) \
   sigma_L = sqrt(L sigma^2 + D^2 s_L^2) = #r(sigma_DL)
 $
@@ -200,6 +213,8 @@ $
   &= Phi^(-1)("CSL") sigma_L \
   &= #result[#r(SS_i)]
 $
+
+Lead-time variability raises SS from #r(SS_fixed) to #r(SS_i) (+#r((SS_i - SS_fixed) / SS_fixed * 100)%).
 
 *(j)*
 
@@ -236,7 +251,7 @@ $
 
 *(l)*
 
-In periodic review the safety stock is larger as it covers the uncertainty over $T + L$ time units; i.e., $T$ units of time more than in the continuous case
+In periodic review the safety stock is larger because it covers the uncertainty over $T + L$ time units ($T$ units of time more than in the continuous case)
 - Periodic review covers demand over $T + L = 3$ weeks
 - Continuous review cover $L = 2$ weeks
 
@@ -347,9 +362,9 @@ In periodic review the safety stock is larger as it covers the uncertainty over 
     Q_0 = "EOQ" = sqrt((2 D S) / H) = #r(Q_EOQ)
   $
 
-  *Backorders:* $P(D_L > R) = (Q H) / (b D)$
+  Backorders: $P(D_L > R) = (Q H) / (b D)$
 
-  *Lost sales:* $P(D_L > R) = (Q H) / (Q H + b D)$
+  Lost sales: $P(D_L > R) = (Q H) / (Q H + b D)$
 
   $
     Q = sqrt((2 D (S + b n(R))) / H), quad n(R) = (200 - R)^2 / 400
@@ -363,8 +378,6 @@ In periodic review the safety stock is larger as it covers the uncertainty over 
     [Lost sales], [#result[#r(lost.Q)]], [#result[#r(lost.R)]],
   )
 
-  
-  
   *(b)* What do you observe? 
   
   - $Q approx 249$ and $R approx 192$ in both cases. 
@@ -372,8 +385,12 @@ In periodic review the safety stock is larger as it covers the uncertainty over 
 
   *(c)* What is your intuitive explanation?
 
-  - *$R$ is higher with lost sales:* a backorder is filled from the next delivery and saves some holding cost; a lost sale saves nothing. Each shortage costs $h + b D \/ Q$ instead of $b D \/ Q$, so it pays to hold more SS
-  - *$Q$ is lower with lost sales:* a higher $R$ means a smaller $n(R)$, so $Q = sqrt(2 D (S + b n(R)) \/ h)$ shrinks
-  - *The difference is small:* the critical ratios differ only by $h Q approx 500$ against $b D = 12000$, so $P("stockout")$ moves only from 4.15% to 3.98%.
+  - $R$ is higher with lost sales
+    - A backorder is filled from the next delivery and saves some holding cost while a lost sale saves nothing
+    - Each shortage costs $h + b D \/ Q$ instead of $b D \/ Q$, so it pays to hold more SS
+  - $Q$ is lower with lost sales
+    - A higher $R$ means a smaller $n(R)$, $Q = sqrt(2 D (S + b n(R)) \/ h)$ decreases
+  - The difference is small
+    - The critical ratios differ only by $h Q approx 500$ against $b D = 12000$, so $P("stockout")$ decreases
 ]
 

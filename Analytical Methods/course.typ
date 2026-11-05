@@ -1227,6 +1227,58 @@ $
 
 ]
 
+
+= Goal Programming
+
+== Weighted
+
+- If failure to meet goal happens when *attained value* < *target value* → $S_i^-$
+- If failure to meet goal happens when *attained value* > *target value* → $S_i^+$
+- If failure to meet goal happens when *attained value* ≠ *target value* → both $S_i^+ and S_i^-$
+
+$
+  min quad
+  &sum_(i in I) w_i s_i^- \
+  "s.t." 
+  &dots + s_i^- - s_i^+ = dots \
+$
+
+#example([Fruit Computer Company])[
+  - Q = {E, G, M}
+  - S = {1, 2, 3}
+  - d_q = (5000, 3000, 1000)
+
+  - budget = 28000
+
+  - special order = (10, 6, 4)
+
+  - p = 1
+
+  - 
+
+  - batch size = 100
+
+  - $x_(s q)$: quantity of chips of quality $q$ supplier $s$
+
+
+  $
+    min quad
+    & \
+    "s.t." quad
+    & \
+    & \
+    & \
+  $
+
+]
+
+
+== Premptive
+
+
+
+#pagebreak()
+
 #pagebreak()
 
 

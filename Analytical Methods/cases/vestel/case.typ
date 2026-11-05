@@ -63,3 +63,7 @@ $
     && quad forall (i, j) in A, t in T
 $
 
+= Bosch
+
+
+

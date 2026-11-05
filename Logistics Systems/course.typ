@@ -109,8 +109,4 @@ $
   & \
 $
 
-Income:
-- ??
-- Salvage 
-Cost:
-- Transport 
+
