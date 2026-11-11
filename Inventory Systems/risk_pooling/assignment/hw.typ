@@ -257,56 +257,7 @@ $
 
 #[
 
-= Problem 2: Delayed Differentiation
 
-#let D = 100
-#let sd = 65
-#let L = 2 // weeks
-#let T = 1 // weeks
-#let n = 2
-
-== *(a)*
-
-#let CSL = 0.97
-
-#let D_LT = D * (L + T)
-#let sd_LT = sd * calc.sqrt(L + T)
-
-#let z = norm.ppf(CSL)
-#let S = D_LT + z * sd_LT
-
-#r(S)
-
-#let loss = norm.pdf(z) - z * (1 - norm.cdf(z))
-#let e_backorders = sd_LT * loss
-
-#let SS = S - D_LT + e_backorders
-
-#r(SS)
-
-== *(b)*
-
-#let CSL = 0.97
-
-- Without postponement
-
-#let SS_np = n * norm.ppf(CSL) * calc.sqrt(L) * sd
-
-#r(SS_np)
-
-- With postponement
-
-#let sd_pooled = calc.sqrt(2 * sd)
-#let SS_p = norm.ppf(CSL) * calc.sqrt(L) * sd_pooled
-
-#r(SS_p)
-
-== *(c)*
-
-  
-]
-
-#[
 
 = Problem 2: Delayed Differentiation
 

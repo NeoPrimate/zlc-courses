@@ -238,10 +238,86 @@
 })
 
 
-#align(center, text(9pt, weight: "bold")[MZ 510 — LP & IP formulation cheatsheet])
-#v(-3pt)
-#align(center, text(5.4pt, fill: luma(90))[
-  #mc[red] = new w.r.t. the base model (← base) · names in _italics_ · ▸ = variant (lists only what it adds) · _cues_ = wording that signals the model · §6 = recognition guide])
+
+// ---------- recognition guide (top of sheet, full width) -------------
+#let ggrp(t) = table.cell(colspan: 2, fill: luma(222), inset: 1.6pt, text(weight: "bold", t))
+#let GT(..rows) = table(columns: (1fr, auto), align: left, inset: 1.6pt, stroke: 0.35pt + luma(175), ..rows)
+#place(top + center, scope: "parent", float: true, clearance: 5pt, block(width: 100%, {
+  set text(size: 5.6pt)
+  set par(leading: 0.35em)
+  grid(columns: (1fr, 1fr, 1fr), column-gutter: 5pt,
+    GT(
+      ggrp[Make / mix / allocate],
+      [*how much of each* to make, *limited* hours / material, *at most X can be sold*], [1.1],
+      [*several plants*, *same % of capacity*], [1.1 ▸ same %],
+      [*parts per product*, *complete units*], [1.1 ▸ assembly],
+      [*mix*, *contains at least X %*, blend], [1.3],
+      [*cut* standard *lengths*, *waste*], [1.5],
+      [*season of X weeks*, price levels, *salvage*], [1.7],
+      ggrp[Shares — what is the % *of*?],
+      [% of a *product's content*], [1.3],
+      [% of the *total* budget, *average* ≤], [1.2],
+      [% of what goes to *one market*], [3.1 ▸ market entry],
+      [*same % of capacity*], [1.1 ▸ same %],
+      [*% of demand served*], [2.1 ▸ service],
+      [*at least 2 A per B*, *equal numbers*], [4 Toolbox: ratio],
+      ggrp[Cover / select],
+      [*minimum* nutrients / requirements, cheapest], [1.4 ▸ diet],
+      [*at least N per period*, *shifts*], [1.4 ▸ staffing],
+      [*combination of shifts*, *bonus*], [1.4 ▸ combination],
+      [*within X minutes*, *every area served*], [1.4 ▸ locate sites],
+      [*exactly once* (routes, groups)], [1.4 partitioning],
+      [*select which projects*, yes/no, *NPV*], [3.2],
+    ),
+    GT(
+      ggrp[Time],
+      [*months / quarters*, *carried over*, *inventory*], [1.6],
+      [*backorders*, shortages carried], [1.6 ▸ backlog],
+      [*several products share* capacity], [1.6 ▸ several products],
+      [*increases X % per period*, holding *% of cost*], [1.6],
+      [holding depends on *period made*], [1.6 ▸ transportation],
+      [*repeats* (cycle), *usage depends on amount carried*], [1.6 ▸ cycle],
+      [*start*, *due date*, *delay*, *overlap*], [3.7],
+      [*release / deadline* days, truck *routes*, *carrier*], [3.9],
+      [*lead time in days* + *interest rate*, *containers*], [3.10],
+      ggrp[Networks],
+      [*from … to …*, supply & demand, cost table], [2.1],
+      [*budget*, *% served*, *too slow for deadline*], [2.1 ▸ service],
+      [*supply ≠ demand*, *as much as possible*, *penalty per unit short*], [2.0],
+      [*through / via* hubs, warehouses], [2.3],
+      [*from i through j to k* variables], [2.3 ▸ path],
+      [*shortest route*, *keep or replace each year*], [2.4],
+      [*maximum* that can be *sent*], [2.5],
+    ),
+    GT(
+      ggrp[Assignment — who goes where?],
+      [*each to exactly one*, one-to-one], [2.2],
+      [*more* agents than tasks], [2.0 · 2.2],
+      [*each customer from only one* facility], [3.4 ▸ single sourcing],
+      [*sequence / position* of jobs], [3.7 ▸ positional],
+      [*k must do both*], [3.3],
+      [*visit each city once and return*], [3.8],
+      ggrp[Fixed costs & logic],
+      [*if any* produced → *fixed / setup* cost, *lease*], [3.1],
+      [*full-time / part-time*, *union*], [3.1 ▸ workforce],
+      [*fee to enter* a market], [3.1 ▸ market entry],
+      [*open / close* facilities, *annual fixed cost*], [3.4],
+      [*keep all?*, existing facilities], [3.4 ▸ keep or close],
+      [*exactly b open*, *through DC* paths], [3.4 ▸ path],
+      [*at most k*, *if … then*, *not both*, *at least one*], [4 Toolbox],
+      [*either … or*, *cannot overlap*], [4 Toolbox: big M],
+      ggrp[Cost changes with volume · answers],
+      [*first X cost …, next …* (unit cost *rises*)], [3.6 ▸ convex],
+      [*volume discount* (unit cost *falls*)], [3.6 ▸ concave],
+      [*free allowance*, then pay], [3.6 ▸ free quota],
+      [*investment → capacity* table · *value table per count*], [3.5 · 3.5 ▸ value table],
+      [*what if* price / capacity changes, *one more unit*], [5 Sensitivity],
+      [*round* the LP solution?], [3.2],
+    ),
+  )
+  v(1pt)
+  text(size: 5.4pt)[*IP if:* *number of* people / trucks / containers · yes/no · choose a level from a table. Otherwise LP.]
+}))
 
 #block(fill: luma(246), inset: 3pt, radius: 2pt, width: 100%, {
   set text(size: 5.5pt)
@@ -311,7 +387,7 @@
     &x_k >= q sum_j x_j &&&&#nm[min share of k] \
     &x_2 + x_3 <= x_1 &&&&#nm[relative limit (e.g. A + B ≤ C)]
   $
-  *Ratio trick* ($a_j$: score of $j$, $c$: limit): $(sum_j a_j x_j)\/(sum_j x_j) <= c$ ⟺ $sum_j (a_j - c) x_j <= 0$ (valid because the denominator is $>= 0$). Check whether the average is over *all* money or only the invested part. Average return per \$ = objective / $b$.
+  *Ratio trick* ($a_j$: score of $j$, $c$: limit): $(sum_j a_j x_j)\/(sum_j x_j) <= c quad arrow.double.long.l.r quad sum_j (a_j - c) x_j <= 0$ (valid because the denominator is $>= 0$). Check whether the average is over *all* money or only the invested part. Average return per \$ = objective / $b$.
 ]
 
 #model([1.3 Blending], cues: [mix inputs into products, "contains at least / at most X % of", inputs bought at a price, products sold at a price])[
@@ -326,7 +402,7 @@
     &x_(r j) >= q_(r j) sum_(r') x_(r' j) quad &&forall r, j quad &&#nm[min fraction (quality)] \
     &x_(r j) <= q^max_(r j) sum_(r') x_(r' j) &&forall r, j &&#nm[max fraction]
   $
-  2 inputs: $x_(1 j) >= q (x_(1 j) + x_(2 j))$ ⟺ $(1-q) x_(1 j) - q x_(2 j) >= 0$. Helper totals $x^T_j = sum_r x_(r j)$ keep rows short (§4). Extra input bought at a stepped price ⇒ 3.6.
+  2 inputs: $x_(1 j) >= q (x_(1 j) + x_(2 j)) quad arrow.double.long.l.r quad (1-q) x_(1 j) - q x_(2 j) >= 0 quad forall j$. Helper totals $x^T_j = sum_r x_(r j)$ keep rows short (4 Toolbox). Extra input bought at a stepped price ⇒ 3.6.
 ]
 
 #model([1.4 Covering: diet · shift scheduling · set covering], cues: ["at least / minimum required", "each … must be covered / served", "within X minutes / adjacent", minimise cost or number used])[
@@ -341,7 +417,7 @@
   #VAR[Diet / nutrition (continuous)] $x_j >= 0$: amount of food $j$; $a_(t j)$: nutrient $t$ per unit of $j$; $r_t$: minimum intake.
   #VAR[Staffing with overlapping shifts]
   #VARS([#mc[$n_j in ZZ_(>=0)$: people *starting* shift $j$] (replaces $x_j$)])
-  $a_(t j) = 1$ if shift $j$ works in period $t$. Shift = 2 consecutive periods ⇒ #mc[$n_(t-1) + n_t >= r_t$]; round-the-clock ⇒ cyclic ($n_0 = n_(|T|)$).
+  $a_(t j) = 1$ if shift $j$ works in period $t$. Shift = 2 consecutive periods ⇒ #mc[$n_(t-1) + n_t >= r_t space forall t$]; round-the-clock ⇒ cyclic ($n_0 = n_(|T|)$).
   #VAR[Workers do a combination of shifts, priced per combination]
   #SETS([#mc[$Q$: allowed pairs $(j, j')$, $j < j'$]])
   #PARS([#mc[$c_(j j')$: daily pay of pair, + bonus if not consecutive ($j' > j + 1$)]])
@@ -362,8 +438,8 @@
     &mc(tau_(j t) z_(j t) <= overline(tau)) &&forall j, t &&#nm[within time (forces $z = 0$ if $tau > overline(tau)$)] \
     &mc(("pop"_j - overline("pop")) y_j >= 0) &&forall j &&#nm[eligibility rule (forces $y_j = 0$)]
   $
-  Short form (no $z$): $sum_j a_(t j) y_j >= 1$ with $a_(t j) = 1$ if $j$ reaches $t$ (in time, same / adjacent area). \
-  *Partitioning* ("exactly once", e.g. pick routes so each location is on exactly one): $sum_j a_(t j) y_j = 1$, often + $sum_j y_j = b$ (number of vehicles). *Max covering* (limited sites): $max sum_t w_t z_t$, $z_t <= sum_j a_(t j) y_j$, $sum_j y_j <= b$ ($w_t$: weight of area $t$).
+  Short form (no $z$): $sum_j a_(t j) y_j >= 1 space forall t$ with $a_(t j) = 1$ if $j$ reaches $t$ (in time, same / adjacent area). \
+  *Partitioning* ("exactly once", e.g. pick routes so each location is on exactly one): $sum_j a_(t j) y_j = 1 space forall t$, often + $sum_j y_j = b$ (number of vehicles). *Max covering* (limited sites): $max sum_t w_t z_t$, $z_t <= sum_j a_(t j) y_j space forall t$, $sum_j y_j <= b$ ($w_t$: weight of area $t$).
 ]
 
 #model([1.5 Cutting stock (patterns)], cues: [cut standard lengths / rolls into pieces, "number of standard pieces used", "waste / trim loss"])[
@@ -423,7 +499,7 @@
     min quad &sum_(t, m, t') mc(c^m_t (1 + h (t' - t))) x_(t m t') && quad &&#nm[production + holding cost] \
     "s.t." quad &sum_(t') x_(t m t') <= k^m_t quad &&forall t\, m quad &&#nm[capacity (supply)] \
     &sum_(t, m) x_(t m t') >= d'_(t') &&forall t' &&#nm[net demand] \
-    &mc(x_(t m t') = 0) &&forall t' < t &&#nm[no backorders (or $c = M$)]
+    &mc(x_(t m t') = 0) &&forall t\, m\, t': t' < t &&#nm[no backorders (or $c = M$)]
   $
   Use when holding cost is a % of *the cost in the period the unit was made*. Capacity > net demand ⇒ #mc[dummy period, $c = 0$] (2.0).
 ]
@@ -445,15 +521,15 @@
 #sec[2 · Network models (totally unimodular ⇒ LP gives integer solutions)]
 // =====================================================================
 
-#model([2.0 Balanced vs unbalanced · dummy nodes (applies to all of §2)], cues: [total supply ≠ total demand, "meet demand as much as possible", shortage penalty, a route that does not exist])[
+#model([2.0 Balanced vs unbalanced · dummy nodes (applies to all of 2)], cues: [total supply ≠ total demand, "meet demand as much as possible", shortage penalty, a route that does not exist])[
   #D-dummy
   #PARS([$s_p$: supply of source $p$], [$d_j$: demand of destination $j$], [$S = sum_p s_p$: total supply], [$D = sum_j d_j$: total demand],
     [$c^e_j$: shortage penalty per unit at $j$], [$M$: big cost (forbidden arc)])
   #VARS([$x_(p j) >= 0$: flow (2.1)], [#mc[$x_(p, "dum")$, $x_("dum", j) >= 0$: flow to / from a dummy]], [#mc[$e_j >= 0$: shortage at $j$] (penalty form)])
   #table(columns: (auto, 1fr), inset: 2pt, stroke: 0.4pt + luma(180),
-    [*Balanced* $S = D$], [All rows *equalities*: $sum_j x_(p j) = s_p$ #nm[(supply)], $sum_p x_(p j) = d_j$ #nm[(demand)].],
+    [*Balanced* $S = D$], [All rows *equalities*: $sum_j x_(p j) = s_p space forall p$ #nm[(supply)], $sum_p x_(p j) = d_j space forall j$ #nm[(demand)].],
     [*Supply > demand* $S > D$], [(a) supply rows $<=$, demand rows $=$ (or $>=$); *or* (b) #mc[*dummy destination*] with #mc[$d_"dum" = S - D$], cost #mc[$c_(p, "dum") = 0$] (or idle cost) ⇒ all rows $=$. $x_(p, "dum")$ = *unused capacity*.],
-    [*Demand > supply* $S < D$], [Plain model *infeasible*. (a) #mc[*dummy source*] with #mc[$s_"dum" = D - S$], cost #mc[$c_("dum", j) = c^e_j$] (0 if none) ⇒ $x_("dum", j)$ = *unmet demand*; *or* (b) demand rows $<=$, supply rows $=$ ("meet demand as much as possible"); *or* (c) #mc[shortage variable]: $sum_p x_(p j) + e_j = d_j$, cost $c^e_j e_j$ ("penalty per unit short").],
+    [*Demand > supply* $S < D$], [Plain model *infeasible*. (a) #mc[*dummy source*] with #mc[$s_"dum" = D - S$], cost #mc[$c_("dum", j) = c^e_j$] (0 if none) ⇒ $x_("dum", j)$ = *unmet demand*; *or* (b) demand rows $<=$, supply rows $=$ ("meet demand as much as possible"); *or* (c) #mc[shortage variable]: $sum_p x_(p j) + e_j = d_j space forall j$, cost $c^e_j e_j$ ("penalty per unit short").],
     [*Forbidden pairs*], [$c_(p j) = M$ or $x_(p j) = 0$ — incl. a destination that must be served in full (no dummy flow / no $e_j$ for it).],
     [*Assignment* (2.2)], [More agents than tasks ⇒ #mc[dummy tasks] ($c = 0$) or agent rows $<= 1$. More tasks ⇒ #mc[dummy agents] (task not done) or task rows $<= 1$.],
     [*Transshipment* (2.3)], [$b_i$ = net supply of node $i$. $sum_i b_i > 0$ ⇒ #mc[dummy sink] with $b_"dum" = -sum_i b_i$, arcs from every source, $c = 0$; or supply nodes $<= b_i$. $sum_i b_i < 0$ ⇒ dummy source with penalty.],
@@ -507,7 +583,7 @@
     "s.t." quad &mc(sum_(j: (i,j) in A) x_(i j) - sum_(j: (j,i) in A) x_(j i) = b_i) quad &&forall i in N quad &&#nm[flow conservation (out − in)] \
     &x_(i j) <= k_(i j) &&forall (i, j) in A &&#nm[arc capacity]
   $
-  If $sum_i b_i != 0$: see 2.0. Any arc is allowed (source → sink directly, or between intermediate nodes). "Where to add capacity / how much to invest" ⇒ shadow price of the supply row (§5).
+  If $sum_i b_i != 0$: see 2.0. Any arc is allowed (source → sink directly, or between intermediate nodes). "Where to add capacity / how much to invest" ⇒ shadow price of the supply row (5 Sensitivity).
   #VAR[Path form, layered networks only — use arc form *or* path form]
   #SETS([$P$ ($p$): suppliers], [$W$ ($w$): transshipment nodes], [$J$ ($j$): customers])
   #PARS([$s_p$: supply], [$d_j$: demand], [$c^P_(p w)$, $c^W_(w j)$: unit costs per leg], [$k_w$: node capacity; $c_w$: handling cost per unit])
@@ -545,7 +621,7 @@
     &sum_j x_(omega j) - sum_j x_(j omega) mc(+ v) = 0 &&&&#nm[sink] \
     &x_(i j) <= k_(i j) &&forall (i, j) &&#nm[arc capacity]
   $
-  Same as: artificial arc $omega -> alpha$, $max x_(omega alpha)$, conservation everywhere; or $max sum_j x_(alpha j)$. *Two-way links* (lines, roads): arcs $(i, j)$ and $(j, i)$, each $<= k_(i j)$, or shared #mc[$x_(i j) + x_(j i) <= k_(i j)$].
+  Same as: artificial arc $omega -> alpha$, $max x_(omega alpha)$, conservation everywhere; or $max sum_j x_(alpha j)$. *Two-way links* (lines, roads): arcs $(i, j)$ and $(j, i)$, each $<= k_(i j)$, or shared #mc[$x_(i j) + x_(j i) <= k_(i j) space forall$ links $\{i, j\}$].
 ]
 
 // =====================================================================
@@ -576,7 +652,7 @@
   $
   Keep units consistent (all hours or all minutes).
   #VAR[Fixed fee to enter a market + assortment rules]
-  #SETS([$J$ ($j$): product lines / departments], [#mc[$G$ ($g$): candidate markets]])
+  #SETS([$J$ ($j$): product lines / departments], [#mc[$G$ ($g$): candidate markets]], [$G^=, G^q subset G$: markets with the "equal numbers" / "at most q %" rule])
   #PARS([$pi_j$: margin], [#mc[$f_g$: entry cost of market $g$]], [$k$: total capacity], [#mc[$M = k$]], [$b$: max markets entered], [$q$: max share])
   #VARS([#mc[$x_(j g) >= 0$: items of $j$ sent to $g$]], [#mc[$y_g in {0,1}$: enter market $g$]])
   $
@@ -584,8 +660,8 @@
     "s.t." quad &sum_(j, g) x_(j g) <= k &&&&#nm[capacity] \
     &mc(sum_j x_(j g) <= M y_g) quad &&forall g quad &&#nm[ship only if entered] \
     &sum_g y_g <= b &&&&#nm[at most b markets] \
-    &x_(1 g) = x_(2 g) = x_(3 g) &&&&#nm["equal numbers" in g] \
-    &x_(j g) - q sum_(j') x_(j' g) <= 0 &&&&#nm["at most q % of the total" (cross-multiplied)]
+    &x_(1 g) = x_(2 g) = x_(3 g) &&forall g in G^= &&#nm["equal numbers" ($G^=$: markets with this rule)] \
+    &x_(j g) - q sum_(j') x_(j' g) <= 0 &&forall j\, g in G^q &&#nm["at most q % of the total" ($G^q$: markets with this rule)]
   $
 ]
 
@@ -597,7 +673,7 @@
     max quad &sum_j pi_j y_j && quad &&#nm[total NPV / profit] \
     "s.t." quad &sum_j a_(t j) y_j <= b_t quad &&forall t quad &&#nm[budget per year]
   $
-  Conditions between projects ("at most two", "only if", "not both") ⇒ §4. *LP relaxation* (drop integrality) gives a bound: ≥ IP optimum for max, ≤ for min. *Rounding the LP solution can be infeasible or far from optimal* ⇒ solve the IP (branch & bound).
+  Conditions between projects ("at most two", "only if", "not both") ⇒ 4 Toolbox. *LP relaxation* (drop integrality) gives a bound: ≥ IP optimum for max, ≤ for min. *Rounding the LP solution can be infeasible or far from optimal* ⇒ solve the IP (branch & bound).
 ]
 
 #model([3.3 Assign items to several roles with an "in both" count], base: [3.2], cues: ["exactly k must take part in both", choose members per event / role, score table])[
@@ -646,7 +722,7 @@
   #VAR[Keep or close existing facilities (one level)] facilities → markets only:
   #PARS([$f^W_w$, $k^W_w$, $c^W_(w j)$, $d_j$ as above])
   #VARS([$x^W_(w j) >= 0$; $y^W_w in {0,1}$])
-  $min sum_w f^W_w y^W_w + sum_(w,j) c^W_(w j) x^W_(w j)$ s.t. #nm[demand] $sum_w x^W_(w j) >= d_j$, #nm[capacity] $sum_j x^W_(w j) <= k^W_w y^W_w$ (no capacity given ⇒ $M$). "Is it worth keeping all?" ⇒ solve with all $y^W_w = 1$ (plain transportation) vs $y^W_w$ free and compare. At least $ceil(sum_j d_j \/ k^W)$ must stay open (equal capacities $k^W$). Opening rules ("if A then B", "at most 2", "A or B") ⇒ §4.
+  $min sum_w f^W_w y^W_w + sum_(w,j) c^W_(w j) x^W_(w j)$ s.t. #nm[demand] $sum_w x^W_(w j) >= d_j space forall j$, #nm[capacity] $sum_j x^W_(w j) <= k^W_w y^W_w space forall w$ (no capacity given ⇒ $M$). "Is it worth keeping all?" ⇒ solve with all $y^W_w = 1$ (plain transportation) vs $y^W_w$ free and compare. At least $ceil(sum_j d_j \/ k^W)$ must stay open (equal capacities $k^W$). Opening rules ("if A then B", "at most 2", "A or B") ⇒ 4 Toolbox.
   #VAR[Path variables + single sourcing + exactly b open]
   #PARS([$k^P_p$: plant capacity], [$d_j$: demand], [#mc[$c_(p w j)$: unit cost $p -> w -> j$]], [#mc[$c^W_w$: handling cost per unit at $w$]],
     [$f^W_w$: fixed cost of $w$], [#mc[$b$: number of facilities to open]])
@@ -675,8 +751,9 @@
     &mc(x_(j g) <= M y_(j g) &&forall j\, g &&#nm[sell only if entered]) \
     &mc(f^E sum_(j,g) y_(j g) <= b^E &&&&#nm[fee budget]) \
     &sum_(j,g) x_(j g) >= r &&&&#nm[min volume] \
-    &x_(j g) <= d_(j g); quad x_(j 1) = x_(j 2) "(equal split)" &&&&#nm[demand; split rules] \
-    &x_(j g) >= r_g &&forall j &&#nm[min per product in g]
+    &x_(j g) <= d_(j g) &&forall j\, g &&#nm[demand cap ($oo$ if none)] \
+    &x_(j 1) = x_(j 2) &&forall j "with equal split" &&#nm[equal split between markets] \
+    &x_(j g) >= r_g &&forall j\, g &&#nm[min per product in g ($r_g = 0$ if none)]
   $
   #text(weight: "bold", fill: accent.darken(30%))[Alternative B — one integer per block; replaces $y_ell$, use A *or* B]
   #SETS([#mc[$S$ ($s$): blocks where each step adds the same capacity]])
@@ -690,7 +767,7 @@
   Plus all rows of A except the $y_ell$ ones. *B is valid only if* each extra step buys *less* capacity than the previous block ($k_1 > k_2 > dots$): the solver then fills the blocks in order by itself (same idea as convex segments, 3.6). If the gain per step rises or jumps ⇒ use A.
   #VAR[Share a fixed number of units among items, value table per count]
   #VARS([#mc[$y_(ell j) in {0,1}$: item $j$ gets $ell$ units]])
-  $max sum_(ell, j) pi_(ell j) y_(ell j)$ ($pi_(ell j)$: value table) s.t. #nm[one count per item] $sum_ell y_(ell j) = 1$; #nm[total units] $sum_(ell, j) ell y_(ell j) = b$. Needed when the value per extra unit is not constant.
+  $max sum_(ell, j) pi_(ell j) y_(ell j)$ ($pi_(ell j)$: value table) s.t. #nm[one count per item] $sum_ell y_(ell j) = 1 space forall j$; #nm[total units] $sum_(ell, j) ell y_(ell j) = b$. Needed when the value per extra unit is not constant.
 ]
 
 #model([3.6 Piecewise-linear cost: diseconomies (convex) vs economies (concave)], cues: ["first X units cost …, next Y units cost …", free quota then pay, volume discount, penalty above a threshold])[
@@ -701,7 +778,7 @@
   #PARS([$k_s$: width of segment $s$], [$c_s$: unit cost in $s$, $c_1 < c_2 < dots$])
   #VARS([#mc[$x_s >= 0$: amount in segment $s$]], [$x = sum_s x_s$: total])
   $
-    "cost" = &mc(sum_s c_s x_s) quad "with" quad x = sum_s x_s\, quad 0 <= x_s <= k_s &&&&#nm[the LP fills cheap segments first]
+    "cost" = &mc(sum_s c_s x_s) quad "with" quad x = sum_s x_s\, quad 0 <= x_s <= k_s quad forall s &&&&#nm[the LP fills cheap segments first]
   $
   #VAR[Free quota, then pay per extra unit (water allowance, emission credits)]
   #SETS([$J$ ($j$): activities], [$R$ ($r$): other resources])
@@ -714,7 +791,7 @@
     &mc(sum_j a^Q_j x_j = x_1 + x_2) &&&&#nm[quota resource balance] \
     &mc(x_1 <= k_1\, quad x_2 <= k_2) &&&&#nm[free part · extra part]
   $
-  Same as: $x^T$ = total use of the quota resource, $x^T >= sum_j a^Q_j x_j$, $x^T >= k_1$, cost $c_2 (x^T - k_1)$. Area / mix shares on the activities ⇒ helper variable + ratio rows (§4).
+  Same as: $x^T$ = total use of the quota resource, $x^T >= sum_j a^Q_j x_j$, $x^T >= k_1$, cost $c_2 (x^T - k_1)$. Area / mix shares on the activities ⇒ helper variable + ratio rows (4 Toolbox).
   #VAR[Convex cost inside a sourcing network]
   #SETS([$P$ ($p$): plants], [$J$ ($j$): demand points], [$S$ ($s$): segments])
   #PARS([$d_j$: demand], [$c_(p j)$: transport cost], [#mc[$k_(p s)$: width of segment $s$ at plant $p$]], [#mc[$c_(p s)$: unit cost in segment $s$ (rising)]])
@@ -733,9 +810,9 @@
     f(x) &= mc(sum_ell lambda_ell f(beta_ell)) && quad &&#nm[cost replaced in objective] \
     x &= mc(sum_ell lambda_ell beta_ell) &&&&#nm[x as a combination of breakpoints] \
     &mc(sum_ell lambda_ell = 1\, quad sum_ell y_ell = 1) &&&&#nm[convex comb.; one segment] \
-    &mc(lambda_1 <= y_1\, quad lambda_ell <= y_(ell-1) + y_ell\, quad lambda_m <= y_(m-1)) &&&&#nm[only the 2 ends of the chosen segment]
+    &mc(lambda_1 <= y_1\, quad lambda_ell <= y_(ell-1) + y_ell quad (ell = 2..m-1)\, quad lambda_m <= y_(m-1)) &&&&#nm[only the 2 ends of the chosen segment]
   $
-  *Buying extra input at a stepped price inside a blend (1.3: $x_(r j)$ input $r$ in product $j$, $s_r$ supply):* $x$ = amount of input $r$ bought, supply row #mc[$sum_j x_(r j) <= s_r + x$], objective $- sum_ell lambda_ell f(beta_ell)$, + the four rows above.
+  *Buying extra input at a stepped price inside a blend (1.3: $x_(r j)$ input $r$ in product $j$, $s_r$ supply):* $x$ = amount of input $r$ bought, supply row of that input #mc[$sum_j x_(r j) <= s_r + x$], objective $- sum_ell lambda_ell f(beta_ell)$, + the four rows above.
 ]
 
 #model([3.7 Single-machine scheduling with due dates], cues: [jobs on one machine, processing times, due dates, "total delay / lateness", "cannot overlap"])[
@@ -752,7 +829,7 @@
   #VARS([#mc[$z_(j ell) in {0,1}$: job $j$ in position $ell$]], [$C_ell >= 0$: completion of position $ell$; $e_ell >= 0$ its delay])
   $
     &sum_ell z_(j ell) = 1 quad forall j\, quad sum_j z_(j ell) = 1 quad forall ell quad &&&&#nm[assignment (2.2)] \
-    &C_ell = sum_(ell' <= ell) sum_j tau_j z_(j ell')\, quad e_ell >= C_ell - sum_j delta_j z_(j ell) &&&&#nm[completion · delay]
+    &C_ell = sum_(ell' <= ell) sum_j tau_j z_(j ell')\, quad e_ell >= C_ell - sum_j delta_j z_(j ell) quad forall ell &&&&#nm[completion · delay]
   $
 ]
 
@@ -802,7 +879,7 @@
 ]
 
 // =====================================================================
-#sec[4 · Logical-constraint toolbox]
+#sec[4 · Toolbox: logical constraints, big M, linearising]
 // =====================================================================
 #[
 #set text(size: 5.5pt)
@@ -824,14 +901,14 @@
   [*Min lot $r$ if produced*], [$r y <= x <= M y$ #nm[(semi-continuous)]],
   [*Either–or*], [$g_1(x) <= b_1 + M y$, $g_2(x) <= b_2 + M(1 - y)$ #nm[(machine scheduling)]],
   [*If $g_1(x) > 0$ then $g_2(x) >= 0$*], [$g_1(x) <= M y$, $-g_2(x) <= M(1 - y)$],
-  [*At least $b$ of $m$ constraints hold*], [$g_i(x) <= b_i + M(1 - z_i)$ for each constraint $i$, $sum_i z_i >= b$],
-  [*Single sourcing*], [$x_(w j) <= M z_(w j)$ with $M = d_j$, $sum_w z_(w j) = 1$],
+  [*At least $b$ of $m$ constraints hold*], [$g_i(x) <= b_i + M(1 - z_i) space forall i$ (each constraint), $sum_i z_i >= b$],
+  [*Single sourcing*], [$x_(w j) <= M z_(w j) space forall w, j$ with $M = d_j$; $sum_w z_(w j) = 1 space forall j$],
   [*Integer from binaries*], [$x = sum_ell ell y_ell$, $sum_ell y_ell = 1$ (discrete levels, step costs)],
   [*Choosing $M$* (big M, all models)], [smallest valid bound: $min_r b_r \/ a_(r j)$, max order $d_j$, total demand $sum_j d_j$, $sum_j tau_j$],
   table.cell(colspan: 2, fill: luma(244))[*Linearising*],
   [*Max / abs / excess*], [$e >= g_1(x) - g_2(x)$, $e >= 0$ (= max(0, ·)) · $|g_1(x)| = e^+ + e^-$ with $g_1(x) = e^+ - e^-$],
-  [*Helper (definition) variable*], [$x^T = sum_j x_j$ (total area, total blend), then ratios use $x^T$: $x_j - 0.5 x^T <= 0$, $x_j - 0.1 x^T >= 0$ ],
-  [*Ratio / average / share*], [$sum_j a_j x_j <= c sum_j x_j$ · $x_k >= q sum_j x_j$ · equal %: $x^T_p \/ k_p = x^T_1 \/ k_1$],
+  [*Helper (definition) variable*], [$x^T = sum_j x_j$ (total area, total blend), then ratios use $x^T$: $x_j - 0.5 x^T <= 0$, $x_j - 0.1 x^T >= 0 space forall j$ ],
+  [*Ratio / average / share*], [$sum_j a_j x_j <= c sum_j x_j$ · $x_k >= q sum_j x_j$ · equal %: $x^T_p \/ k_p = x^T_1 \/ k_1 space forall p$],
   [*Piecewise / non-linear cost*], [convex: segments, no binaries · concave: $lambda_ell$ weights + $y_ell$ segment binaries (3.6)],
   [*Parameter test as a constraint*], [$("pop"_j - overline("pop")) y_j >= 0$ (forces $y_j = 0$ if $"pop"_j < overline("pop")$) · $tau_(j t) z_(j t) <= overline(tau)$ (forces $z_(j t) = 0$ if $tau_(j t) > overline(tau)$) #nm[(1.4)]],
   [*Forbid / force*], [$x_(p j) = 0$ (infeasible arc) · $y_j = 0$ if a rule fails],
@@ -858,53 +935,97 @@
 
 #v(2pt)
 #block(fill: luma(244), inset: 3pt, radius: 2pt, width: 100%, text(size: 5.4pt)[
-  *Recipe.* Sets → params (units) → vars (index, domain) → named objective terms → one named constraint family per sentence. %, ratios → cross-multiply; "if / only if / at most k", fixed fees → binaries (§4).
+  *Recipe.* Sets → params (units) → vars (index, domain) → named objective terms → one named constraint family per sentence. %, ratios → cross-multiply; "if / only if / at most k", fixed fees → binaries (4 Toolbox).
 ])
 
 // =====================================================================
-#sec[6 · Recognition guide: wording → model]
+//  Sensitivity report — which cells answer which question
+//  Red cells = the ones you need. Layout mirrors Excel Solver's report.
+//  Variable rows: x1 = produced (final > 0), x2 = not produced (final 0)
+//  Constraint rows: r1 = binding (used = RHS), r2 = non-binding (slack > 0)
+//  ⁺ = common exam question not in the course material
 // =====================================================================
-#[
-#set text(size: 5.5pt)
-#table(columns: (1fr, auto), inset: 2pt, stroke: 0.4pt + luma(180),
-  table.header([*If the problem says…*], [*Use*]),
-  [limited hours / material / budget; "how much of each to make"; maximise profit], [1.1 resource rows],
-  ["at most X can be sold", sales forecast], [1.1 demand cap],
-  ["each plant uses the same %" of its capacity], [1.1 ▸ same % (helper $u$)],
-  ["units of part A, B per product"; maximise number of complete products], [1.1 ▸ assembly],
-  ["average … must not exceed"; "at least / no more than X % of the total"], [1.2 · §4 ratio (cross-multiply)],
-  ["contains at least X %"; mix inputs into products], [1.3 blending],
-  ["at least N needed in each period"; overlapping shifts], [1.4 staffing],
-  ["each area must be within X minutes / adjacent"; fewest sites], [1.4 set covering],
-  ["each … on exactly one route / in exactly one group"], [1.4 partitioning],
-  [cut standard lengths into pieces; trim waste], [1.5 cutting stock],
-  [months / quarters; "carried over"; ending inventory; overtime], [1.6 balance rows],
-  ["backorders allowed", "shortages carried to next month"], [1.6 ▸ backlog],
-  [a repeating loop (route, cycle); usage depends on the amount carried], [1.6 ▸ cyclic],
-  [season of X weeks; demand depends on the price], [1.7 price levels],
-  [total supply ≠ total demand; "as much as possible"; penalty per unit short], [2.0 dummy / shortage],
-  [sources with capacities → destinations with demands; cost table], [2.1 transportation],
-  [budget limit; "at least X % of class served"; deadline / lead time], [2.1 ▸ service levels],
-  ["each person to exactly one task"], [2.2 assignment],
-  ["through / via" hubs, warehouses, pumps], [2.3 transshipment],
-  [shortest / cheapest route; "replace or keep each year"], [2.4 shortest path],
-  ["maximum that can be sent", link capacities only], [2.5 max flow],
-  ["if any are produced / opened, a fixed cost"; lease; start-up], [3.1 fixed charge, $x <= M y$],
-  [full-time / part-time workers; union rules], [3.1 ▸ workforce],
-  [fixed fee to enter a market / introduce a product], [3.1 ▸ market entry · 3.5],
-  [select projects; yes/no; cash per year], [3.2 knapsack],
-  ["exactly k in both" events / roles], [3.3 · §4 AND],
-  [open / close plants or warehouses; fixed annual cost; several levels], [3.4 location],
-  ["at most k facilities"; "only from one warehouse"], [3.4 ▸ max open · single sourcing],
-  ["investment → resulting capacity" table; in multiples of], [3.5 levels (A) or blocks (B)],
-  ["first X units cost …, next …"; free allowance then pay], [3.6 convex (no binaries)],
-  [volume discount; price drops after X units], [3.6 concave (binaries)],
-  [jobs, processing times, due dates; total delay], [3.7 either-or with $M$],
-  [visit each city once and return], [3.8 TSP],
-  [orders with release / deadline; candidate truck routes; carrier option], [3.9 consolidation],
-  [containers vs per-unit; lead time + interest rate], [3.10 batches + pipeline cost],
-  ["if A then B", "not both", "at least one of", "at most k of"], [§4 binary logic],
-  ["either … or …", "if this then that" on amounts], [§4 big M],
-  ["what if price / capacity changes", "how much would you pay for one more"], [§5 sensitivity],
+
+#let hl = red.transparentize(70%)
+
+#let rep(header, rows, cells) = table(
+  columns: (1.1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+  inset: 1.8pt, align: center + horizon, stroke: 0.35pt + luma(160),
+  fill: (x, y) => if y == 0 { luma(230) } else if (x, y) in cells { hl },
+  ..header.map(h => text(weight: "bold", size: 5pt, h)),
+  ..rows.flatten(),
 )
-]
+
+// Variable Cells: 0 Name · 1 Final · 2 Reduced cost · 3 Obj. coef · 4 Allow. inc · 5 Allow. dec
+#let VT(cells) = rep(
+  ([Var], [Final value], [Reduced cost], [Obj. coef], [Allow. inc], [Allow. dec]),
+  (([$x_1$], [$x^*_1 > 0$], [0], [$c_1$], [inc], [dec]),
+   ([$x_2$], [0], [$"rc"_2$], [$c_2$], [inc], [dec])),
+  cells)
+
+// Constraints: 0 Name · 1 Final (used) · 2 Shadow price · 3 RHS · 4 Allow. inc · 5 Allow. dec
+#let CT(cells) = rep(
+  ([Constr.], [Final value (used)], [Shadow price], [RHS], [Allow. inc], [Allow. dec]),
+  (([$r_1$ bind.], [$= b_1$], [$"SP"_1$], [$b_1$], [inc], [dec]),
+   ([$r_2$ non-b.], [$< b_2$], [0], [$b_2$], [∞], [slack])),
+  cells)
+
+#let card(title, tbl, rule) = block(breakable: false, above: 4pt, below: 4pt, width: 100%,
+  inset: (left: 3pt, rest: 2pt), stroke: (left: 1pt + rgb("#2f6db3")), {
+  text(weight: "bold", size: 6.6pt, fill: rgb("#1f4a7a"), title)
+  v(1pt)
+  tbl
+  v(1pt)
+  rule
+})
+
+#text(size: 9pt, weight: "bold")[Sensitivity report — which cells answer which question]
+#v(-2pt)
+#text(size: 5.6pt, fill: luma(80))[Price / profit change → *Variable Cells*; resource / capacity change → *Constraints*. Always first: is the change inside the allowable range?]
+
+#card([A · What is the optimal solution and profit? How much of each resource is used?],
+  {
+    table(columns: (1fr, 1fr), inset: 1.8pt, align: center, stroke: 0.35pt + luma(160),
+      fill: (x, y) => if y == 0 { luma(230) } else if x == 1 { hl },
+      text(weight: "bold")[Objective cell], text(weight: "bold")[Final value], [OFV], [$z^*$])
+    v(1pt)
+    VT(((1, 1), (1, 2)))
+    v(1pt)
+    CT(((1, 1), (3, 1), (1, 2), (3, 2)))
+  },
+  [Plan = *final values* of the variables; profit = $z^*$. Resource used = constraint *final value*; leftover (slack) $=$ RHS − used. Slack 0 ⇒ *binding*.])
+
+#card([B · One price / profit changes by $Delta$],
+  VT(((1, 1), (3, 1), (4, 1), (5, 1))),
+  [*Inside* ($-"dec" <= Delta <= "inc"$; range of optimality $[c - "dec", c + "inc"]$): *plan unchanged*, $Delta z = Delta dot x^*$. \
+  *Outside:* plan changes (re-solve). Still: an increase raises profit by *at least* $Delta dot x^*$ (old plan stays feasible); a decrease lowers it by *at most* $|Delta| dot x^*$.])
+
+#card([C · A product that is *not* produced (final value 0)],
+  VT(((1, 2), (2, 2), (4, 2))),
+  [It becomes worth producing only if its profit rises by more than its *allowable increase* ($= |"reduced cost"|$). Forcing 1 unit changes profit by the reduced cost.])
+
+#card([D · Several prices change at once — 100 % rule],
+  VT(((1, 1), (1, 2), (4, 1), (5, 1), (4, 2), (5, 2))),
+  [$sum Delta \/ "allowable" <= 1$ (inc for increases, dec for decreases) ⇒ *plan unchanged*, $Delta z = sum Delta dot x^*$. $> 1$ ⇒ can't conclude.])
+
+#card([E · One resource amount changes by $Delta$ (more / less available, spoiled, lost)],
+  CT(((2, 1), (4, 1), (5, 1), (2, 2), (5, 2))),
+  [*Binding* ($"SP" != 0$), inside $[b - "dec", b + "inc"]$ (range of feasibility): $Delta z = "SP" dot Delta$; *plan quantities change* (report doesn't say how). \
+  *Non-binding* ($"SP" = 0$): profit unchanged; a decrease ≤ slack (= allow. dec) keeps the *plan unchanged*. \
+  Outside the range: re-solve.])
+
+#card([F · Buy (or sell) extra resource at a given price — worth it?],
+  CT(((2, 1), (4, 1))),
+  [Each extra unit is worth the shadow price, *up to the allowable increase*; beyond it, each unit is worth *at most* SP (could be less). Offer of $q$ units for total cost $C$: guaranteed value $"SP" dot min(q, "inc")$. If that alone $>= C$ ⇒ *buy*; if even $"SP" dot q < C$ ⇒ *don't*; otherwise re-solve.])
+
+#card([G · Several resources change at once — 100 % rule],
+  CT(((2, 1), (2, 2), (4, 1), (5, 1), (4, 2), (5, 2))),
+  [$sum Delta \/ "allowable" <= 1$ ⇒ *shadow prices unchanged*, $Delta z = sum "SP" dot Delta$.])
+
+#card([H · Fill in a constraint row from the solution alone (non-binding)],
+  CT(((1, 2), (2, 2), (3, 2), (4, 2), (5, 2))),
+  [Final value = resource used (plug the optimal $x^*$ into the constraint). RHS = from the model. Used < RHS ⇒ non-binding ⇒ SP = 0, allow. inc = ∞ (1E+30), allow. dec = slack = RHS − used.])
+
+#card([I · Is a *new* product worth making? ⁺],
+  CT(((2, 1), (2, 2))),
+  [Value of the resources one unit uses: $sum_r "SP"_r a_r$. Profitable if its unit profit is higher.])

@@ -102,22 +102,45 @@ J, R, T = Ajrt.shape
 
 m = gp.Model("flp")
 
-IAjt = m.addMVar((J, T), vtype=GRB.BINARY, name="init_active")  # silo j first activated in t
-FCjt = m.addMVar((J, T), vtype=GRB.BINARY, name="closes")       # silo j closes in t
-Yjt  = m.addMVar((J, T), vtype=GRB.BINARY, name="active")       # silo j active in t
-LCjt = m.addMVar((J, T), vtype=GRB.BINARY, name="low_cap")      # low capacity in t
-HCjt = m.addMVar((J, T), vtype=GRB.BINARY, name="high_cap")     # high capacity in t
+IAjt = m.addMVar((J, T), vtype=GRB.BINARY, name="init_active")
+FCjt = m.addMVar((J, T), vtype=GRB.BINARY, name="closes")
+Yjt  = m.addMVar((J, T), vtype=GRB.BINARY, name="active")
+LCjt = m.addMVar((J, T), vtype=GRB.BINARY, name="low_cap")
+HCjt = m.addMVar((J, T), vtype=GRB.BINARY, name="high_cap")
 Sjrt = m.addMVar((J, R, T), lb=0.0, name="ship")
 
-m.setObjective(, sense=gp.GRB.MAXIMIZE)
 
-m.addConstr(, name="")
-m.addConstr(, name="")
-m.addConstr(, name="")
+ship_price_cost = FSPt @ Sjrt.sum(axis=1).sum(axis=0)
 
+salvage_value = (SVjt * FCjt).sum()
+transport_cost = (Ajrt * Sjrt).sum()
+low_cap_cost = (CLCjt * LCjt).sum()
+high_cap_cost = (CHCjt * HCjt).sum()
+closing_cost = (CCFjt * FCjt).sum()
 
+processing_cost = (Gjt * Sjrt.sum(axis=1)).sum()
 
+m.setObjective(
+    ship_price_cost +
+    salvage_value -
+    transport_cost -
+    low_cap_cost -
+    high_cap_cost -
+    closing_cost -
+    processing_cost,
+    sense=gp.GRB.MAXIMIZE
+)
 
+m.addConstr(IAjt.sum(axis=1) <= 1, name="open_once")
+m.addConstr(FCjt.sum(axis=1) <= 1, name="close_once")
+m.addConstr(IAjt + FCjt <= 1, name="no_open_close_same_t")
+m.addConstr(Yjt == LCjt + HCjt, name="cap_level")
+m.addConstr(LCjt[:, 1:] + HCjt[:, :-1] <= 1, name="no_downgrade")
 
+m.addConstr(FCjt == 0, name="initialization")
+m.addConstr(Yjt[:, 1:] + IAjt[:, 1:] - Yjt[:, :-1] - FCjt[:, 1:] == 0, name="active_flow")
 
+m.addConstr(Sjrt.sum(axis=1) <= Qjt_low * LCjt + Qjt_high * HCjt, name="capacity")
+m.addConstr(Sjrt.sum(axis=0) == Drt, name="demand")
 
+m.optimize()
