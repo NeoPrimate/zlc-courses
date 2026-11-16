@@ -11,7 +11,7 @@
 
 #let mc(x) = text(fill: red, x)
 
-= Defining the problem
+== Defining the problem
 
 *Sets*
 
@@ -109,6 +109,65 @@ $
   & \
 $
 
+= Travelling Salesperson Problem (TSP)
+
+*Parameters*
+
+- $N = {0, 1, ..., n-1}$: set of nodes, with $0$ as the depot
+- $c_(i j)$: distance from node $i$ to node $j$
+
+*Variables*
+
+- $x_(i j) = cases(
+    1 quad #[if the tour goes directly from $i$ to $j$],
+    0 quad #[otherwise],
+  )$
+- $y_i in RR^+$: position of node $i$ in the tour (MTZ ordering)
+
+*Model*
+
+$
+  min quad
+  &sum_(i in N) sum_(j in N, j != i) c_(i j) x_(i j) \
+  "s.t." quad
+  &sum_(j in N, j != i) x_(i j) = 1 quad &&forall i in N quad &&"out" \
+  &sum_(i in N, i != j) x_(i j) = 1 quad &&forall j in N quad &&"in" \
+  &y_i - y_j + n x_(i j) <= n - 1 quad &&forall i, j in N without {0}, i != j quad &&"subtour elimination" \
+  &1 <= y_i <= n - 1 quad &&forall i in N without {0} quad &&"bounds" \
+  &x_(i j) in {0, 1} quad &&forall i, j in N, i != j
+$
+
+= Vehicle Routing (VR)
+
+*Sets*
+
+- $V = {0, 1, 2, dots, V}$: nodes
+- $K = {0, 1, 2, dots, K}$: vehicles
+
+*Parameters*
+
+- $c_(i j)$: cost of travelling from node $i$ to node $j$
+- $K$: fleet size 
+- $C$: distribution capacity of any vehicle from the fleet (homogeneous)
+- $d_i$: demand of node (customer) $i$
+
+*Variables*
+
+- $x_(i j k)$: 
+- $y_(i j k)$: 
+- $u_i$: 
+
+*Model*
 
 
-
+$
+  min quad
+  &sum_(i in V) sum_(j in V) c_(i j) sum_(k = 1)^K  \
+  "s.t." quad
+  & \
+  & \
+  & \
+  & \
+  & \
+  & \
+$

@@ -28,7 +28,7 @@
 #let model(title, base: none, cues: none, body) = block(
   width: 100%, breakable: true, above: 4pt, below: 2pt,
   inset: (left: 4pt, rest: 1.5pt), stroke: (left: 1.1pt + accent), {
-  text(size: 6.6pt, weight: "bold", fill: accent.darken(30%), title)
+  text(size: 8.2pt, weight: "bold", fill: accent.darken(30%), title)
   if base != none { h(3pt); text(fill: luma(110))[← #base] }
   linebreak()
   if cues != none { text(size: 5.3pt, fill: luma(85), style: "italic")[cues: #cues]; linebreak() }
@@ -45,9 +45,9 @@
 #let SETS(cols: 2, ..xs) = defs("Sets", cols: cols, ..xs)
 #let PARS(cols: 2, ..xs) = defs("Params", cols: cols, ..xs)
 #let VARS(cols: 2, ..xs) = defs("Vars", cols: cols, ..xs)
-#let VAR(t) = block(above: 3pt, below: 2.5pt, text(weight: "bold", fill: accent.darken(30%))[▸ #t])
-#let sec(t) = block(above: 5pt, below: 2pt, width: 100%, fill: luma(232), inset: 2.5pt,
-  text(size: 7.2pt, weight: "bold", t))
+#let VAR(t) = block(above: 3.5pt, below: 2.5pt, text(size: 7.2pt, weight: "bold", fill: accent.darken(30%))[▸ #t])
+#let sec(t) = block(above: 6pt, below: 3pt, width: 100%, fill: accent.darken(35%), inset: 3pt,
+  text(size: 9.5pt, weight: "bold", fill: white, t))
 
 // ---------- tiny diagram helper (no packages) --------------------------
 //  dg(w, h, nodes, arcs)   coordinates in cm, origin top-left
@@ -240,7 +240,7 @@
 
 
 // ---------- recognition guide (top of sheet, full width) -------------
-#let ggrp(t) = table.cell(colspan: 2, fill: luma(222), inset: 1.6pt, text(weight: "bold", t))
+#let ggrp(t) = table.cell(colspan: 2, fill: accent.darken(35%), inset: 1.8pt, text(size: 6.4pt, weight: "bold", fill: white, t))
 #let GT(..rows) = table(columns: (1fr, auto), align: left, inset: 1.6pt, stroke: 0.35pt + luma(175), ..rows)
 #place(top + center, scope: "parent", float: true, clearance: 5pt, block(width: 100%, {
   set text(size: 5.6pt)
@@ -743,7 +743,7 @@
     [#mc[$f^E$: entry fee per product per market; $b^E$: fee budget]], [$r$: min total volume], [$d_(j g)$: demand cap],
     [$r_g$: min per product in market $g$], [$M$: big M (largest capacity)])
   #VARS([$x_(j g) >= 0$: units of $j$ to $g$], [#mc[$y_ell in {0,1}$: choose level $ell$]], [#mc[$y_(j g) in {0,1}$: $j$ introduced in $g$]])
-  #text(weight: "bold", fill: accent.darken(30%))[Alternative A — one binary per level (exact for any capacity table)]
+  #text(size: 7.2pt, weight: "bold", fill: accent.darken(30%))[Alternative A — one binary per level (exact for any capacity table)]
   $
     max quad &sum_(j, g) pi_j x_(j g) mc(- sum_ell f_ell y_ell - f^E sum_(j,g) y_(j g)) && quad &&#nm[margin] #mc[#nm[− investment − entry fees]] \
     "s.t." quad &mc(sum_ell y_ell = 1 &&&&#nm[choose one level]) \
@@ -755,7 +755,7 @@
     &x_(j 1) = x_(j 2) &&forall j "with equal split" &&#nm[equal split between markets] \
     &x_(j g) >= r_g &&forall j\, g &&#nm[min per product in g ($r_g = 0$ if none)]
   $
-  #text(weight: "bold", fill: accent.darken(30%))[Alternative B — one integer per block; replaces $y_ell$, use A *or* B]
+  #text(size: 7.2pt, weight: "bold", fill: accent.darken(30%))[Alternative B — one integer per block; replaces $y_ell$, use A *or* B]
   #SETS([#mc[$S$ ($s$): blocks where each step adds the same capacity]])
   #PARS([$k_0$: base capacity], [#mc[$k_s$: capacity gained per step in block $s$]], [#mc[$b_s$: max steps in block $s$]], [#mc[$f^S$: cost per step]])
   #VARS([#mc[$n_s in ZZ_(>=0)$: steps taken in block $s$]], [$x_(j g)$, $y_(j g)$ as in A])
@@ -915,37 +915,6 @@
 )
 ]
 
-// =====================================================================
-#sec[5 · Sensitivity report (Excel Solver)]
-// =====================================================================
-#[
-#set text(size: 5.5pt)
-#text(size: 5.4pt)[Symbols: $c_j$ objective coefficient of $x_j$; $x^*_j$ optimal value; $b_r$ right-hand side of constraint $r$; SP shadow price; $Delta$ change; $z^*$ optimal objective.]
-#table(columns: (auto, 1fr), inset: 2pt, stroke: 0.4pt + luma(180),
-  [*Final value*], [Variable: $x^*_j$ · Constraint: resource *used* (LHS) at the optimum.],
-  [*Reduced cost*], [Change in $z^*$ per unit increase of a *zero-valued* variable = how much $c_j$ must improve before $x_j$ enters.],
-  [*Allowable inc./dec. (objective $c_j$)*], [Range of $c_j$ where the *optimal solution does not change*; $Delta z^* = Delta c_j dot x^*_j$. Outside: re-solve.],
-  [*Shadow price (constraint)*], [$Delta z^*$ per unit increase of $b_r$: $Delta z^* = "SP" times Delta b_r$. Value of one more unit of a scarce resource. Non-binding ⇒ SP = 0.],
-  [*Allowable inc./dec. (RHS $b_r$)*], [Range where the *shadow price stays valid* — *not* where the solution stays the same: $x^*$ values change.],
-  [*100 % rule: objective*], [$sum_j Delta_j \/ "allowable"_j <= 1$ (allow. inc. for increases, dec. for decreases) ⇒ *optimal solution unchanged*; $Delta z^* = sum_j Delta_j x^*_j$.],
-  [*100 % rule: RHS*], [Same sum over changed $b_r <= 1$ ⇒ *shadow prices unchanged*; $Delta z^* = sum_r "SP"_r Delta_r$.],
-  [*Graphical (2 vars)*], [Plot constraints, feasible region, iso-profit line; optimum at a corner point.],
-)
-]
-
-#v(2pt)
-#block(fill: luma(244), inset: 3pt, radius: 2pt, width: 100%, text(size: 5.4pt)[
-  *Recipe.* Sets → params (units) → vars (index, domain) → named objective terms → one named constraint family per sentence. %, ratios → cross-multiply; "if / only if / at most k", fixed fees → binaries (4 Toolbox).
-])
-
-// =====================================================================
-//  Sensitivity report — which cells answer which question
-//  Red cells = the ones you need. Layout mirrors Excel Solver's report.
-//  Variable rows: x1 = produced (final > 0), x2 = not produced (final 0)
-//  Constraint rows: r1 = binding (used = RHS), r2 = non-binding (slack > 0)
-//  ⁺ = common exam question not in the course material
-// =====================================================================
-
 #let hl = red.transparentize(70%)
 
 #let rep(header, rows, cells) = table(
@@ -972,16 +941,19 @@
 
 #let card(title, tbl, rule) = block(breakable: false, above: 4pt, below: 4pt, width: 100%,
   inset: (left: 3pt, rest: 2pt), stroke: (left: 1pt + rgb("#2f6db3")), {
-  text(weight: "bold", size: 6.6pt, fill: rgb("#1f4a7a"), title)
+  text(weight: "bold", size: 8.2pt, fill: rgb("#1f4a7a"), title)
   v(1pt)
   tbl
   v(1pt)
   rule
 })
 
-#text(size: 9pt, weight: "bold")[Sensitivity report — which cells answer which question]
-#v(-2pt)
-#text(size: 5.6pt, fill: luma(80))[Price / profit change → *Variable Cells*; resource / capacity change → *Constraints*. Always first: is the change inside the allowable range?]
+// =====================================================================
+#sec[5 · Sensitivity report]
+// =====================================================================
+#text(size: 5.6pt, fill: luma(80))[
+  
+]
 
 #card([A · What is the optimal solution and profit? How much of each resource is used?],
   {

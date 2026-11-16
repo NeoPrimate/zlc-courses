@@ -1275,6 +1275,22 @@ $
 
 == Premptive
 
+= Simulation
+
+Confidence interval
+
+$
+  overline(x) plus.minus z sigma / sqrt(n)
+$
+
+Difference $T_109$ and $T_110$: 
+- If CI contains 0, then not significantly different. 
+- If CI does not contains 0, then significantly different (confident at $alpha$ ($arrow z$)) 
+
+#example[
+  
+]
+
 
 
 #pagebreak()
