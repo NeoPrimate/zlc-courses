@@ -19,16 +19,23 @@ D_large = uniform.rvs(loc=100, scale=200, size=T)
 
 disruption = uniform.rvs(loc=0, scale=1, size=T) < p_disruption
 
+
+p_supplier_fail_disruption = 0.4
+p_supplier_no_fail_disruption = 0.1
+
 supplier_fail = np.where(
     disruption, 
-    uniform.rvs(loc=0, scale=1) < 0.4, 
-    uniform.rvs(loc=0, scale=1) < 0.1,
+    uniform.rvs(loc=0, scale=1) < p_supplier_fail_disruption, 
+    uniform.rvs(loc=0, scale=1) < p_supplier_no_fail_disruption,
 )
+
+p_order_cancelled_supplier_fail = 0.4
+p_order_cancelled_no_supplier_fail = 0.1
 
 order_cancellation = np.where(
     supplier_fail, 
-    uniform.rvs(loc=0, scale=1) < 0.4, 
-    uniform.rvs(loc=0, scale=1) < 0.1,
+    uniform.rvs(loc=0, scale=1) < p_order_cancelled_supplier_fail, 
+    uniform.rvs(loc=0, scale=1) < p_order_cancelled_no_supplier_fail,
 )
 
 accept_discount = np.where(

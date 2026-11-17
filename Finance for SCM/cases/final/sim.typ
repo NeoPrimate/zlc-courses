@@ -54,7 +54,7 @@
 )
 
 #let setup = (
-  tax_rate:      0.40,   // income taxes ÷ pre-tax income (104/260)
+  tax_rate:      0.39848,   // income taxes ÷ pre-tax income (104/260)
   min_cash:      300,    // required cash
   credit_line:   3200,   // MDM Bank limit
   interest_rate: 0.08,   // charged on the opening balance drawn
@@ -139,21 +139,23 @@
     opportunities: (
       bigbox: (
         label: "Pursue Big-Box Distribution", note: "Mega-Mart: sales +25/10/5%, lower margin, pays on time",
-        sales: (2250, 3375, 3996, 3996), cogs: (2171, 3257, 3856, 3856),
-        AR: (185, 277, 328, 328), inv: (535, 803, 951, 951), AP: (244, 366, 433, 433),
+        sales: (2250, 3375, 3994), cogs: (2151, 3203, 3783),
+        AR: (462, 663, 807), inv: (507, 755, 891), AP: (227, 339, 400),
       ),
       online: (
         label: "Expand Online Presence", note: "Golden Years Nutraceuticals: sales +10/5/3%, low DSO",
-        sales: (900, 1395, 1710, 1710), cogs: (839, 1300, 1594, 1594),
-        AR: (62, 96, 117, 117), inv: (207, 321, 393, 393), AP: (94, 146, 179, 179),
+        sales: (900, 1395, 1707), cogs: (838, 1299, 1589),
+        AR: (32, 59, 69), inv: (197, 306, 374), AP: (89, 137, 168),
       ),
       privlab: (
         label: "Develop a Private-Label Product", note: "Fountain of Youth Spas: sales +5/4/3%, higher margin, more AR & inventory",
-        sales: (450, 828, 1125, 1125), cogs: (396, 729, 990, 990),
-        AR: (148, 272, 370, 370), inv: (119, 220, 298, 298), AP: (44, 82, 111, 111),
+        sales: (450, 828, 1123), cogs: (230, 574, 843),
+        AR: (189, 285, 360), inv: (148, 233, 300), AP: (24, 61, 89),
       ),
     ),
+    // accept: ("online", "privlab"),
     accept: ("online", "privlab"),
+  
     actuals: (:),
   ),
   // // ---------------------------------------------------------------- Phase 3
@@ -163,20 +165,21 @@
     opportunities: (
       high_risk: (
         label: "Acquire a High-Risk Customer", note: "Midwest Miracles: 20% bankruptcy risk, 50% recovery",
-        sales: 3000, cogs: 2708, ebit: 292, AR: 1616, inv: 668, AP: 304,
+        sales: 3549, cogs: 3127, ebit: 422, AR: 1637, inv: 766, AP: 331,
         p_default: 0.20, recovery: 0.50,
       ),
       renegotiate: (
         label: "Renegotiate Supplier Credit Terms", note: "Dynasty Enterprises 2/10 net 30: 3% discount, DPO → ~10 days",
-        sales: 0, cogs: -190, AR: 0, inv: 0, AP: -761,
+        sales: 0, cogs: -237, AR: 0, inv: -58, AP: -923,
       ),
       global: (
-        label: "Adopt a Global Expansion Strategy", note: "Viva Familia (Latin America): modest sales growth, DSO −2, DSI +2",
-        sales: (355, 710, 1065, 1065), cogs: (331, 662, 993, 993),
-        AR: (58, 117, 175, 175), inv: (83, 167, 250, 250), AP: (37, 74, 112, 112),
+        label: "Adopt a Global Expansion Strategy", note: "Viva Familia (Latin America): modest sales growth, DSO -2, DSI +2",
+        sales: (355, 842, 842), cogs: (324, 770, 770),
+        AR: (46, 119, 119), inv: (110, 252, 252), AP: (34, 81, 81),
       ),
     ),
-    accept: ("renegotiate", "global"),
+    accept: none,
+    // accept: ("renegotiate", "global"),
     actuals: (:),
   ),
 )
