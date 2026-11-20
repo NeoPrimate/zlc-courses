@@ -1175,6 +1175,36 @@ What is my *solution space*?
 - What can I change? (capacity, network, etc.)
 
 
+= Conclusion
+
+Triangle:
+- BS
+- P&L
+- CF
+
+$
+  "NPV"_r = sum_(t=0)^T F_t / (1 + r)^t 
+$
+
+Tradeoffs:
+- CoGS v. CSL
+- SKU proliferation v. Inventory
+- SKU proliferation
+  - Pareto
+- CCC v. Financing (credit line)
+
+If $d / E$ constant
+
+$
+  g = "NP" / E
+$
+
+If new $D$ not possible:
+
+$
+  g = "NP" / (D + E)
+$
+
 
 
 #set page(width: 15in, height: auto, margin: 0.4in, fill: white)

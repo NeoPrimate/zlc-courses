@@ -24,6 +24,8 @@
 
 = Analytical Methods
 
+
+
 - Demand
 - Capacity
 - Lead Time
@@ -1277,6 +1279,24 @@ $
 
 = Simulation
 
+- Entity
+- Attribute
+- Activity
+- Variables
+- States
+- System
+  - Discrete
+  - Continous
+  - Deterministic
+  - Stochastic 
+  - Static
+  - Dynamic
+- Delay
+- Event list
+- Event notice
+- Clock
+- Model
+
 Confidence interval
 
 $
@@ -1290,6 +1310,64 @@ Difference $T_109$ and $T_110$:
 #example[
   
 ]
+
+== Discrete Event 
+
+= Decision Analysis
+
+1. Decision (Payoff) Matrix
+
+- Optimist: Maximax
+
+Max(Drill) = 600 & max(Don't) = 0 -> max=600 -> Drill
+
+- Pessimist: Maximin
+
+Min(Drill) = -200 & Min(Don't) = 0 -> max=0 -> Don't
+
+- Minimax regret
+
+Max regret(Drill) = 200 & Max regret(Don't) = 600 -> min=200 -> Drill
+
+- Equally likely
+
+Avg(Drill) = (0.5 (600) + 0.5 (-200)) / 2 = 
+
+Avg(Don't) = (0.5 (0) + 0.5 (0)) / 2 = 
+
+-> 
+
+=== Decision tree
+- Sequence of events
+- Calculation
+
+#import "@preview/fletcher:0.6.0" as fletcher: diagram, node, edge
+
+#diagram(
+  node-stroke: 1pt,
+  node((0,0), [Start], shape: "rect", corner-radius: 2pt, name: <start>),
+  node((1,2), [Mary\ (0.6)], shape: "rect", corner-radius: 2pt, name: <1>),
+  
+  node((1,-2), [AZ], shape: "rect", corner-radius: 2pt, name: <2>),
+  node((2,-2), [72000], shape: "rect", corner-radius: 2pt, name: <4>),
+  
+  node((1,0), [Fair], shape: "rect", corner-radius: 2pt, name: <3>),
+  node((2,-1.05), [90000], shape: "rect", corner-radius: 2pt, name: <90>),
+  node((2,0), [70000], shape: "rect", corner-radius: 2pt, name: <70>),
+  node((2,1.05), [60000], shape: "rect", corner-radius: 2pt, name: <60>),
+
+  edge(<start>, <1>, "-|>", [accept]),
+  edge(<start>, <2>, "-|>", [reject]),
+  
+  // edge(<start>, <3>, "-|>", [1]),
+  
+  // edge(<3>, <90>, "-|>", [0.1]),
+  // edge(<3>, <70>, "-|>", [0.5]),
+  // edge(<3>, <60>, "-|>", [0.4]),
+
+  // edge(<2>, <4>, "-|>", []),
+)
+
 
 
 
